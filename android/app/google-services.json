@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "833793929525",
+    "project_id": "helldivers2-companion",
+    "storage_bucket": "helldivers2-companion.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833793929525:android:42a759c19f6e04288a9c7c",
+        "android_client_info": {
+          "package_name": "com.jebstern.helldivers2_companion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYRJyYMcIPfbyfFEUOqILlYT5gvKinYeg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
