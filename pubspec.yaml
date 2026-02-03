@@ -33,6 +33,7 @@ dev_dependencies:
     sdk: flutter
   freezed: ^3.1.0
   json_serializable: ^6.9.5
+  mocktail: ^1.0.4
   plugin_platform_interface: ^2.1.8
   riverpod_generator: ^2.6.5
   riverpod_lint: ^2.6.5
