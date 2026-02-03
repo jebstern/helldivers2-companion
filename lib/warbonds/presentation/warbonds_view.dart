@@ -1,20 +1,20 @@
 import "package:flutter/material.dart";
-import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../core/presentation/base_view.dart";
+import "../../main.dart" show di;
 import "../application/warbonds_controller.dart";
 import "../application/warbonds_state.dart";
 import "../domain/warbond_item.dart";
 import "warbond_card.dart";
 
-class WarbondsView extends ConsumerStatefulWidget {
+class WarbondsView extends StatefulWidget {
   const WarbondsView({super.key});
 
   @override
-  ConsumerState<WarbondsView> createState() => _WarbondsViewState();
+  State<WarbondsView> createState() => _WarbondsViewState();
 }
 
-class _WarbondsViewState extends ConsumerState<WarbondsView> {
+class _WarbondsViewState extends State<WarbondsView> {
   @override
   Widget build(BuildContext context) {
     return BaseView(
@@ -30,7 +30,8 @@ class _WarbondsViewState extends ConsumerState<WarbondsView> {
   }
 
   Widget _buildBody() {
-    final WarbondsState warbondsState = ref.watch(warbondsControllerProvider);
+    final WarbondsController controller = di<WarbondsController>();
+    final WarbondsState warbondsState = controller.state.value;
 
     return Column(
       spacing: 32,

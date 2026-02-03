@@ -1,12 +1,20 @@
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
-import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:get_it/get_it.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
+import "core/constants/titles_repository.dart";
 import "core/infrastructure/firebase_options.dart";
-import "core/providers.dart";
+import "core/infrastructure/settings.dart";
+import "core/infrastructure/shared_preferences_repository.dart";
 import "core/utils/hd_logger.dart";
 import "helldivers_app.dart";
+import "news/application/news_controller.dart";
+import "settings/application/settings_controller.dart";
+import "warbonds/application/warbonds_controller.dart";
+
+late final Settings settings;
+final GetIt di = GetIt.I;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,18 +23,22 @@ Future<void> main() async {
   final SharedPreferences sharedPreferences =
       await SharedPreferences.getInstance();
 
-  final ProviderContainer container = ProviderContainer(
-    overrides: <Override>[
-      sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-    ],
-  );
+  settings = Settings(sharedPreferences);
 
   initLogging();
 
-  return runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const HelldiversApp(),
-    ),
-  );
+  setupDi(sharedPreferences: sharedPreferences);
+
+  return runApp(const HelldiversApp());
+}
+
+void setupDi({required SharedPreferences sharedPreferences}) {
+  di
+    ..registerLazySingleton(NewsController.new)
+    ..registerLazySingleton(SettingsController.new)
+    ..registerLazySingleton(WarbondsController.new)
+    ..registerLazySingleton(TitlesRepository.new)
+    ..registerLazySingleton(() {
+      return SharedPreferencesRepository(sharedPreferences: sharedPreferences);
+    });
 }

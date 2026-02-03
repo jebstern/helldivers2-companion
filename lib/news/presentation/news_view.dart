@@ -1,9 +1,10 @@
 import "dart:async";
 
 import "package:flutter/material.dart";
-import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:signals_flutter/signals_flutter.dart";
 
 import "../../core/presentation/base_view.dart";
+import "../../main.dart" show di;
 import "../application/news_controller.dart";
 import "../application/news_state.dart";
 import "../domain/news_article.dart";
@@ -12,12 +13,13 @@ import "news_card.dart";
 import "news_greeting.dart";
 import "pagination.dart";
 
-class NewsView extends ConsumerWidget {
+class NewsView extends StatelessWidget {
   const NewsView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final NewsState newsState = ref.watch(newsControllerProvider);
+  Widget build(BuildContext context) {
+    final NewsController controller = di<NewsController>();
+    final NewsState newsState = controller.state.watch(context);
 
     return BaseView(
       child: Column(
@@ -25,14 +27,12 @@ class NewsView extends ConsumerWidget {
         children: <Widget>[
           const NewsGreeting(),
           const SizedBox(height: 32),
-          _buildBody(context, ref),
+          _buildBody(context, controller, newsState),
           const SizedBox(height: 32),
           ResponsivePagination(
             totalPages: newsState.pages,
             currentPage: newsState.currentPage,
-            onPageChanged: (int page) {
-              ref.read(newsControllerProvider.notifier).onPageChanged(page);
-            },
+            onPageChanged: controller.onPageChanged,
           ),
           const SizedBox(height: 16),
         ],
@@ -40,10 +40,12 @@ class NewsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, WidgetRef ref) {
-    final NewsState newsState = ref.watch(newsControllerProvider);
-    final List<NewsArticle> currentPageItems =
-        ref.read(newsControllerProvider.notifier).getCurrentPageItems();
+  Widget _buildBody(
+    BuildContext context,
+    NewsController controller,
+    NewsState newsState,
+  ) {
+    final List<NewsArticle> currentPageItems = controller.getCurrentPageItems();
 
     if (newsState.status.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -63,7 +65,7 @@ class NewsView extends ConsumerWidget {
           return NewsCard(
             newsArticale: e,
             onTap: () {
-              ref.read(newsControllerProvider.notifier).markAsRead(e);
+              controller.markAsRead(e);
 
               unawaited(
                 Navigator.of(context).push(
