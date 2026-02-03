@@ -1,20 +1,19 @@
 import "package:cloud_firestore/cloud_firestore.dart";
-import "package:riverpod_annotation/riverpod_annotation.dart";
+import "package:signals_flutter/signals_flutter.dart";
 
 import "../../core/utils/hd_logger.dart";
 import "../domain/warbond_item.dart";
 import "warbonds_state.dart";
 
-part "warbonds_controller.g.dart";
 
-@riverpod
-class WarbondsController extends _$WarbondsController {
-  @override
-  WarbondsState build() {
+class WarbondsController {
+  WarbondsController() {
     _listenToWarbondUpdates();
-
-    return const WarbondsState();
   }
+
+  final FlutterSignal<WarbondsState> state = signal<WarbondsState>(
+    const WarbondsState(),
+  );
 
   void _listenToWarbondUpdates() {
     final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -83,6 +82,6 @@ class WarbondsController extends _$WarbondsController {
   }
 
   void _updateState(List<WarbondItem> warbondItems) {
-    state = state.copyWith(warbonds: warbondItems);
+    state.value = state.value.copyWith(warbonds: warbondItems);
   }
 }

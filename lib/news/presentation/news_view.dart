@@ -3,11 +3,11 @@ import "dart:math";
 
 import "package:auto_size_text/auto_size_text.dart";
 import "package:flutter/material.dart";
-import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:forui/forui.dart";
 
 import "../../core/constants/titles_repository.dart";
 import "../../core/presentation/base_view.dart";
+import "../../main.dart" show di;
 import "../../settings/application/settings_controller.dart";
 import "../../titles/domain/player_title.dart";
 import "../application/news_controller.dart";
@@ -17,14 +17,14 @@ import "news_article_page.dart";
 import "news_card.dart";
 import "pagination.dart";
 
-class NewsView extends ConsumerStatefulWidget {
+class NewsView extends StatefulWidget {
   const NewsView({super.key});
 
   @override
-  ConsumerState<NewsView> createState() => _NewsViewState();
+  State<NewsView> createState() => _NewsViewState();
 }
 
-class _NewsViewState extends ConsumerState<NewsView> {
+class _NewsViewState extends State<NewsView> {
   static const List<String> _greetings = <String>[
     "Welcome",
     "Hail",
@@ -55,7 +55,8 @@ class _NewsViewState extends ConsumerState<NewsView> {
 
   @override
   Widget build(BuildContext context) {
-    final NewsState newsState = ref.watch(newsControllerProvider);
+    final NewsController controller = di<NewsController>();
+    final NewsState newsState = controller.state.value;
     final FTypography typography = context.theme.typography;
 
     return BaseView(
@@ -74,9 +75,7 @@ class _NewsViewState extends ConsumerState<NewsView> {
           ResponsivePagination(
             totalPages: newsState.pages,
             currentPage: newsState.currentPage,
-            onPageChanged: (int page) {
-              ref.read(newsControllerProvider.notifier).onPageChanged(page);
-            },
+            onPageChanged: controller.onPageChanged,
           ),
           const SizedBox(height: 16),
         ],
@@ -85,10 +84,9 @@ class _NewsViewState extends ConsumerState<NewsView> {
   }
 
   Widget _buildBody() {
-    final NewsState newsState = ref.watch(newsControllerProvider);
-    final List<NewsArticle> currentPageItems = ref
-        .read(newsControllerProvider.notifier)
-        .getCurrentPageItems();
+    final NewsController controller = di<NewsController>();
+    final NewsState newsState = controller.state.value;
+    final List<NewsArticle> currentPageItems = controller.getCurrentPageItems();
 
     if (newsState.status.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -108,7 +106,7 @@ class _NewsViewState extends ConsumerState<NewsView> {
           return NewsCard(
             newsArticale: e,
             onTap: () {
-              ref.read(newsControllerProvider.notifier).markAsRead(e);
+              controller.markAsRead(e);
 
               unawaited(
                 Navigator.of(context).push(
@@ -126,7 +124,9 @@ class _NewsViewState extends ConsumerState<NewsView> {
   }
 
   PlayerTitle? _getCurrentTitle() {
-    final int playerLevel = ref.watch(settingsControllerProvider).level;
+    final SettingsController controller = di<SettingsController>();
+
+    final int playerLevel = controller.state.value.level;
 
     return TitlesRepository.playerTitles
         .where((PlayerTitle t) => t.level != null && t.level! <= playerLevel)

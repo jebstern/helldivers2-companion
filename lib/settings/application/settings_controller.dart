@@ -1,36 +1,42 @@
 import "dart:async";
 
-import "package:riverpod_annotation/riverpod_annotation.dart";
+import "package:signals_flutter/signals_flutter.dart";
 
 import "../../core/infrastructure/shared_preferences_repository.dart";
-import "../../core/providers.dart";
+
 import "../../core/utils/debounce.dart";
+import "../../main.dart";
 import "settings_state.dart";
 
-part "settings_controller.g.dart";
 
-@riverpod
-class SettingsController extends _$SettingsController {
+class SettingsController {
+  SettingsController() {
+    _sharedPreferencesRepository = di<SharedPreferencesRepository>();
+
+    build();
+  }
+
+  late final SharedPreferencesRepository _sharedPreferencesRepository;
   final Debounce _debounce = Debounce(const Duration(milliseconds: 500));
+  final FlutterSignal<SettingsState> state = signal<SettingsState>(
+    const SettingsState(),
+  );
 
-  @override
-  SettingsState build() {
+  void build() {
     final int level =
-        ref
-            .read(sharedPreferencesRepositoryProvider)
-            .readInt(SharedPreferencesKey.level) ??
-        1;
+        _sharedPreferencesRepository.readInt(SharedPreferencesKey.level) ?? 1;
 
-    return SettingsState(level: level);
+    state.value = SettingsState(level: level);
   }
 
   void setLevel(int level) {
-    state = state.copyWith(level: level);
+    state.value = state.value.copyWith(level: level);
     _debounce(() {
       unawaited(
-        ref
-            .read(sharedPreferencesRepositoryProvider)
-            .writeInt(SharedPreferencesKey.level, level),
+        _sharedPreferencesRepository.writeInt(
+          SharedPreferencesKey.level,
+          level,
+        ),
       );
     });
   }

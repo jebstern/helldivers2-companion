@@ -4,24 +4,25 @@ import "dart:async";
 
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:fpdart/fpdart.dart";
-import "package:riverpod_annotation/riverpod_annotation.dart";
+import "package:signals_flutter/signals_flutter.dart";
 
 import "../../core/constants/constants.dart";
-import "../../core/providers.dart";
+import "../../core/infrastructure/shared_preferences_repository.dart";
 import "../../core/utils/hd_logger.dart";
+import "../../main.dart";
 import "../domain/news_article.dart";
 import "news_state.dart";
 
-part "news_controller.g.dart";
 
-@riverpod
-class NewsController extends _$NewsController {
-  @override
-  NewsState build() {
+class NewsController {
+  NewsController() {
+    _sharedPreferencesRepository = di<SharedPreferencesRepository>();
+
     _listenToNewsUpdates();
-
-    return const NewsState();
   }
+
+  final FlutterSignal<NewsState> state = signal<NewsState>(NewsState.empty());
+  late final SharedPreferencesRepository _sharedPreferencesRepository;
 
   void _listenToNewsUpdates() {
     final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -69,9 +70,7 @@ class NewsController extends _$NewsController {
 
           bool read = false;
           if (title.isNotEmpty) {
-            final String? hasRead = ref
-                .read(sharedPreferencesRepositoryProvider)
-                .read(title);
+            final String? hasRead = _sharedPreferencesRepository.read(title);
 
             read = hasRead != null;
           }
@@ -108,20 +107,20 @@ class NewsController extends _$NewsController {
 
   void _updateState(List<NewsArticle> newsArticles) {
     bool newArticles = false;
-    if (state.news.isNotEmpty) {
-      newArticles = newsArticles.length != state.news.length;
+    if (state.value.news.isNotEmpty) {
+      newArticles = newsArticles.length != state.value.news.length;
     }
 
     hdLogger.shout("newArticles: $newArticles");
 
-    state = state.copyWith(
+    state.value = state.value.copyWith(
       news: newsArticles,
       pages: (newsArticles.length / maxItemsPerPage).ceil(),
     );
   }
 
   void onPageChanged(int page) {
-    if (page == state.currentPage) {
+    if (page == state.value.currentPage) {
       return;
     }
 
@@ -129,17 +128,17 @@ class NewsController extends _$NewsController {
       return;
     }
 
-    state = state.copyWith(currentPage: page);
+    state.value = state.value.copyWith(currentPage: page);
   }
 
   List<NewsArticle> getCurrentPageItems() {
-    final int startIndex = (state.currentPage - 1) * maxItemsPerPage;
+    final int startIndex = (state.value.currentPage - 1) * maxItemsPerPage;
     final int endIndex = (startIndex + maxItemsPerPage).clamp(
       0,
-      state.news.length,
+      state.value.news.length,
     );
 
-    return state.news.sublist(startIndex, endIndex);
+    return state.value.news.sublist(startIndex, endIndex);
   }
 
   void markAsRead(NewsArticle article) {
@@ -148,13 +147,14 @@ class NewsController extends _$NewsController {
     }
 
     unawaited(
-      ref
-          .read(sharedPreferencesRepositoryProvider)
-          .write(article.title, DateTime.now().toIso8601String()),
+      _sharedPreferencesRepository.write(
+        article.title,
+        DateTime.now().toIso8601String(),
+      ),
     );
 
-    state = state.copyWith(
-      news: state.news.map((NewsArticle e) {
+    state.value = state.value.copyWith(
+      news: state.value.news.map((NewsArticle e) {
         if (e.title == article.title) {
           return e.copyWith(read: true);
         } else {

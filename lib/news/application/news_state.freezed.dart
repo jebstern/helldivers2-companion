@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NewsState {
 
- List<NewsArticle> get news; AsyncValue<bool> get status; int get currentPage; int get pages;
+ AsyncState<bool> get status; List<NewsArticle> get news; int get currentPage; int get pages;
 /// Create a copy of NewsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $NewsStateCopyWith<NewsState> get copyWith => _$NewsStateCopyWithImpl<NewsState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsState&&const DeepCollectionEquality().equals(other.news, news)&&(identical(other.status, status) || other.status == status)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.pages, pages) || other.pages == pages));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.news, news)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.pages, pages) || other.pages == pages));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(news),status,currentPage,pages);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(news),currentPage,pages);
 
 @override
 String toString() {
-  return 'NewsState(news: $news, status: $status, currentPage: $currentPage, pages: $pages)';
+  return 'NewsState(status: $status, news: $news, currentPage: $currentPage, pages: $pages)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $NewsStateCopyWith<$Res>  {
   factory $NewsStateCopyWith(NewsState value, $Res Function(NewsState) _then) = _$NewsStateCopyWithImpl;
 @useResult
 $Res call({
- List<NewsArticle> news, AsyncValue<bool> status, int currentPage, int pages
+ AsyncState<bool> status, List<NewsArticle> news, int currentPage, int pages
 });
 
 
@@ -62,11 +62,11 @@ class _$NewsStateCopyWithImpl<$Res>
 
 /// Create a copy of NewsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? news = null,Object? status = null,Object? currentPage = null,Object? pages = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? news = null,Object? currentPage = null,Object? pages = null,}) {
   return _then(_self.copyWith(
-news: null == news ? _self.news : news // ignore: cast_nullable_to_non_nullable
-as List<NewsArticle>,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as AsyncValue<bool>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as AsyncState<bool>,news: null == news ? _self.news : news // ignore: cast_nullable_to_non_nullable
+as List<NewsArticle>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,pages: null == pages ? _self.pages : pages // ignore: cast_nullable_to_non_nullable
 as int,
   ));
@@ -153,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<NewsArticle> news,  AsyncValue<bool> status,  int currentPage,  int pages)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AsyncState<bool> status,  List<NewsArticle> news,  int currentPage,  int pages)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NewsState() when $default != null:
-return $default(_that.news,_that.status,_that.currentPage,_that.pages);case _:
+return $default(_that.status,_that.news,_that.currentPage,_that.pages);case _:
   return orElse();
 
 }
@@ -174,10 +174,10 @@ return $default(_that.news,_that.status,_that.currentPage,_that.pages);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<NewsArticle> news,  AsyncValue<bool> status,  int currentPage,  int pages)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AsyncState<bool> status,  List<NewsArticle> news,  int currentPage,  int pages)  $default,) {final _that = this;
 switch (_that) {
 case _NewsState():
-return $default(_that.news,_that.status,_that.currentPage,_that.pages);case _:
+return $default(_that.status,_that.news,_that.currentPage,_that.pages);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +194,10 @@ return $default(_that.news,_that.status,_that.currentPage,_that.pages);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<NewsArticle> news,  AsyncValue<bool> status,  int currentPage,  int pages)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AsyncState<bool> status,  List<NewsArticle> news,  int currentPage,  int pages)?  $default,) {final _that = this;
 switch (_that) {
 case _NewsState() when $default != null:
-return $default(_that.news,_that.status,_that.currentPage,_that.pages);case _:
+return $default(_that.status,_that.news,_that.currentPage,_that.pages);case _:
   return null;
 
 }
@@ -209,9 +209,10 @@ return $default(_that.news,_that.status,_that.currentPage,_that.pages);case _:
 
 
 class _NewsState implements NewsState {
-  const _NewsState({final  List<NewsArticle> news = const <NewsArticle>[], this.status = const AsyncValue<bool>.data(false), this.currentPage = 1, this.pages = 1}): _news = news;
+  const _NewsState({required this.status, final  List<NewsArticle> news = const <NewsArticle>[], this.currentPage = 1, this.pages = 1}): _news = news;
   
 
+@override final  AsyncState<bool> status;
  final  List<NewsArticle> _news;
 @override@JsonKey() List<NewsArticle> get news {
   if (_news is EqualUnmodifiableListView) return _news;
@@ -219,7 +220,6 @@ class _NewsState implements NewsState {
   return EqualUnmodifiableListView(_news);
 }
 
-@override@JsonKey() final  AsyncValue<bool> status;
 @override@JsonKey() final  int currentPage;
 @override@JsonKey() final  int pages;
 
@@ -233,16 +233,16 @@ _$NewsStateCopyWith<_NewsState> get copyWith => __$NewsStateCopyWithImpl<_NewsSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewsState&&const DeepCollectionEquality().equals(other._news, _news)&&(identical(other.status, status) || other.status == status)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.pages, pages) || other.pages == pages));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewsState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._news, _news)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.pages, pages) || other.pages == pages));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_news),status,currentPage,pages);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_news),currentPage,pages);
 
 @override
 String toString() {
-  return 'NewsState(news: $news, status: $status, currentPage: $currentPage, pages: $pages)';
+  return 'NewsState(status: $status, news: $news, currentPage: $currentPage, pages: $pages)';
 }
 
 
@@ -253,7 +253,7 @@ abstract mixin class _$NewsStateCopyWith<$Res> implements $NewsStateCopyWith<$Re
   factory _$NewsStateCopyWith(_NewsState value, $Res Function(_NewsState) _then) = __$NewsStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<NewsArticle> news, AsyncValue<bool> status, int currentPage, int pages
+ AsyncState<bool> status, List<NewsArticle> news, int currentPage, int pages
 });
 
 
@@ -270,11 +270,11 @@ class __$NewsStateCopyWithImpl<$Res>
 
 /// Create a copy of NewsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? news = null,Object? status = null,Object? currentPage = null,Object? pages = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? news = null,Object? currentPage = null,Object? pages = null,}) {
   return _then(_NewsState(
-news: null == news ? _self._news : news // ignore: cast_nullable_to_non_nullable
-as List<NewsArticle>,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as AsyncValue<bool>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as AsyncState<bool>,news: null == news ? _self._news : news // ignore: cast_nullable_to_non_nullable
+as List<NewsArticle>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,pages: null == pages ? _self.pages : pages // ignore: cast_nullable_to_non_nullable
 as int,
   ));
