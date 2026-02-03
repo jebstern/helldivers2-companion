@@ -21,9 +21,10 @@ class _SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     final FTypography typography = context.theme.typography;
     final SettingsController controller = di<SettingsController>();
-    final SettingsState settingsState = controller.state.value;
 
-    return Watch<Column>((BuildContext asd) {
+    return Watch<Column>((BuildContext context) {
+      final SettingsState settingsState = controller.state.watch(context);
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -68,7 +69,6 @@ class _SettingsViewState extends State<SettingsView> {
                   final int newLevel = value.toInt();
 
                   controller.setLevel(newLevel);
-                  setState(() {});
                 },
                 min: _minValue.toDouble(),
                 max: _maxValue.toDouble(),
