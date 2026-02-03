@@ -2,21 +2,22 @@ import "dart:async";
 
 import "package:signals_flutter/signals_flutter.dart";
 
-import "../../core/infrastructure/shared_preferences_repository.dart";
+import "package:helldivers2_companion/core/domain/i_shared_preferences_repository.dart";
+import "package:helldivers2_companion/core/infrastructure/shared_preferences_repository.dart";
 
 import "../../core/utils/debounce.dart";
-import "../../main.dart";
+import "package:helldivers2_companion/main.dart";
 import "settings_state.dart";
 
 
 class SettingsController {
   SettingsController() {
-    _sharedPreferencesRepository = di<SharedPreferencesRepository>();
+    _sharedPreferencesRepository = di<ISharedPreferencesRepository>();
 
     build();
   }
 
-  late final SharedPreferencesRepository _sharedPreferencesRepository;
+  late final ISharedPreferencesRepository _sharedPreferencesRepository;
   final Debounce _debounce = Debounce(const Duration(milliseconds: 500));
   final FlutterSignal<SettingsState> state = signal<SettingsState>(
     const SettingsState(),

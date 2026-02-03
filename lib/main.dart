@@ -6,7 +6,8 @@ import "package:shared_preferences/shared_preferences.dart";
 import "core/constants/titles_repository.dart";
 import "core/infrastructure/firebase_options.dart";
 import "core/infrastructure/settings.dart";
-import "core/infrastructure/shared_preferences_repository.dart";
+import "package:helldivers2_companion/core/domain/i_shared_preferences_repository.dart";
+import "package:helldivers2_companion/core/infrastructure/shared_preferences_repository.dart";
 import "core/utils/hd_logger.dart";
 import "helldivers_app.dart";
 import "news/application/news_controller.dart";
@@ -38,7 +39,7 @@ void setupDi({required SharedPreferences sharedPreferences}) {
     ..registerLazySingleton(SettingsController.new)
     ..registerLazySingleton(WarbondsController.new)
     ..registerLazySingleton(TitlesRepository.new)
-    ..registerLazySingleton(() {
+    ..registerLazySingleton<ISharedPreferencesRepository>(() {
       return SharedPreferencesRepository(sharedPreferences: sharedPreferences);
     });
 }
