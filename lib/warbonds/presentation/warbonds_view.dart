@@ -21,7 +21,7 @@ class _WarbondsViewState extends State<WarbondsView> {
     final WarbondsController controller = di<WarbondsController>();
 
     return BaseView(
-      child: Watch<Column>((BuildContext context) {
+      child: Watch((BuildContext context) {
         final WarbondsState warbondsState = controller.state.watch(context);
 
         return Column(

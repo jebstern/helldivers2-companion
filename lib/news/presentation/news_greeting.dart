@@ -56,12 +56,14 @@ class _NewsGreetingState extends State<NewsGreeting> {
   @override
   Widget build(BuildContext context) {
     final FTypography typography = context.theme.typography;
-    return AutoSizeText(
-      _getGreeting(context),
-      maxLines: 1,
-      style: typography.xl5,
-      textAlign: TextAlign.center,
-    );
+    return Watch((BuildContext context) {
+      return AutoSizeText(
+        _getGreeting(context),
+        maxLines: 1,
+        style: typography.xl5,
+        textAlign: TextAlign.center,
+      );
+    });
   }
 
   PlayerTitle? _getCurrentTitle(BuildContext context) {
