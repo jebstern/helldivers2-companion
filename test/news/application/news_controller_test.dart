@@ -93,7 +93,7 @@ void main() {
       controller.markAsRead(newsArticle);
 
       expect(controller.state.value.news.first.read, isTrue);
-      verify(() => mockRepo.write("Title", any())).called(1);
+      verify(() => mockRepo.write("1", any())).called(1);
     });
   });
 }

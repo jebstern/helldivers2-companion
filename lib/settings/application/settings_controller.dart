@@ -31,9 +31,14 @@ class SettingsController {
 
   /// Initializes or re-synchronizes the controller's state with stored data.
   void build() {
-    final int level =
+    int level =
         _sharedPreferencesRepository.readInt(SharedPreferencesKey.level) ??
         PlayerConstants.minLevel;
+
+    // Sentinel task: Validate data from external storage
+    if (level < PlayerConstants.minLevel || level > PlayerConstants.maxLevel) {
+      level = level.clamp(PlayerConstants.minLevel, PlayerConstants.maxLevel);
+    }
 
     state.value = SettingsState(level: level);
   }

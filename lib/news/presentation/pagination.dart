@@ -44,7 +44,15 @@ class ResponsivePagination extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final _PaginationRange range = _calculateRange(constraints.maxWidth);
+        final _PaginationRange range = _calculateRange(
+          constraints.maxWidth,
+          totalPages,
+          currentPage,
+          buttonWidth,
+          spacing,
+          minVisiblePages,
+          maxVisiblePagesCap,
+        );
 
         final List<Widget> children = <Widget>[
           PaginationArrow(
@@ -67,7 +75,15 @@ class ResponsivePagination extends StatelessWidget {
     );
   }
 
-  _PaginationRange _calculateRange(double maxWidth) {
+  static _PaginationRange _calculateRange(
+    double maxWidth,
+    int totalPages,
+    int currentPage,
+    double buttonWidth,
+    double spacing,
+    int minVisiblePages,
+    int maxVisiblePagesCap,
+  ) {
     final double effectiveMaxWidth = (maxWidth.isFinite)
         ? maxWidth
         : (buttonWidth + spacing) * maxVisiblePagesCap + 80;

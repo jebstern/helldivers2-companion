@@ -87,7 +87,7 @@ class NewsController {
       final String text = element["text"] as String;
       final String imagePath = element["imagePath"] as String;
 
-      final bool read = _sharedPreferencesRepository.read(title) != null;
+      final bool read = _sharedPreferencesRepository.read(id) != null;
 
       return NewsArticle(
         date: date,
@@ -164,14 +164,14 @@ class NewsController {
 
     unawaited(
       _sharedPreferencesRepository.write(
-        article.title,
+        article.id,
         DateTime.now().toIso8601String(),
       ),
     );
 
     state.value = state.value.copyWith(
       news: state.value.news.map((NewsArticle e) {
-        if (e.title == article.title) {
+        if (e.id == article.id) {
           return e.copyWith(read: true);
         } else {
           return e;

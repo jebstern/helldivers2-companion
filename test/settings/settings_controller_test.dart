@@ -96,5 +96,39 @@ void main() {
         ).called(1);
       },
     );
+
+    test("setLevel should debounce multiple calls", () async {
+      when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(1);
+      when(() => mockRepo.writeInt(any(), any())).thenAnswer((_) async {});
+
+      final SettingsController controller = SettingsController(
+        sharedPreferencesRepository: mockRepo,
+      );
+
+      controller.setLevel(10);
+      controller.setLevel(20);
+      controller.setLevel(30);
+
+      expect(controller.state.value.level, 30);
+
+      // Wait for debounce
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+
+      // Should only be called once with the last value
+      verify(() => mockRepo.writeInt(SharedPreferencesKey.level, 30)).called(1);
+      verifyNever(() => mockRepo.writeInt(SharedPreferencesKey.level, 10));
+      verifyNever(() => mockRepo.writeInt(SharedPreferencesKey.level, 20));
+    });
+
+    test("initial state should be clamped if stored level is invalid", () {
+      // Sentinel task: controller should handle invalid values from storage
+      when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(500);
+
+      final SettingsController controller = SettingsController(
+        sharedPreferencesRepository: mockRepo,
+      );
+      // It should be clamped to maxLevel (150)
+      expect(controller.state.value.level, 150);
+    });
   });
 }
