@@ -3,6 +3,7 @@ import "package:flutter_test/flutter_test.dart";
 import "package:helldivers2_companion/core/domain/i_shared_preferences_repository.dart";
 import "package:helldivers2_companion/main.dart";
 import "package:helldivers2_companion/news/application/news_controller.dart";
+import "package:helldivers2_companion/news/domain/news_article.dart";
 import "package:mocktail/mocktail.dart";
 
 class MockFirestore extends Mock implements FirebaseFirestore {}
@@ -67,6 +68,32 @@ void main() {
       );
       controller.onPageChanged(0);
       expect(controller.state.value.currentPage, 1);
+    });
+
+    test("markAsRead updates state and persists", () async {
+      final NewsController controller = NewsController(
+        firestore: mockFirestore,
+      );
+
+      final NewsArticle newsArticle = NewsArticle(
+        id: "1",
+        title: "Title",
+        text: "Text",
+        imagePath: "Path",
+        date: DateTime.now(),
+        read: false,
+      );
+
+      controller.state.value = controller.state.value.copyWith(
+        news: <NewsArticle>[newsArticle],
+      );
+
+      when(() => mockRepo.write(any(), any())).thenAnswer((_) async {});
+
+      controller.markAsRead(newsArticle);
+
+      expect(controller.state.value.news.first.read, isTrue);
+      verify(() => mockRepo.write("Title", any())).called(1);
     });
   });
 }

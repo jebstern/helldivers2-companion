@@ -9,8 +9,8 @@ import "../application/news_controller.dart";
 import "../application/news_state.dart";
 import "../domain/news_article.dart";
 import "news_article_page.dart";
-import "news_card.dart";
 import "news_greeting.dart";
+import "news_list.dart";
 import "pagination.dart";
 
 class NewsView extends StatelessWidget {
@@ -52,7 +52,7 @@ class NewsView extends StatelessWidget {
     } else if (newsState.news.isEmpty) {
       return const _NewsEmpty();
     } else {
-      return _NewsList(
+      return NewsList(
         articles: controller.getCurrentPageItems(),
         onArticleTap: (NewsArticle article) {
           controller.markAsRead(article);
@@ -104,22 +104,4 @@ class _NewsEmpty extends StatelessWidget {
   }
 }
 
-class _NewsList extends StatelessWidget {
-  const _NewsList({required this.articles, required this.onArticleTap});
 
-  final List<NewsArticle> articles;
-  final void Function(NewsArticle) onArticleTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      spacing: 32,
-      children: articles.map((NewsArticle e) {
-        return NewsCard(
-          newsArticle: e,
-          onTap: () => onArticleTap(e),
-        );
-      }).toList(),
-    );
-  }
-}

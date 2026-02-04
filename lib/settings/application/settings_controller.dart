@@ -15,13 +15,13 @@ import "settings_state.dart";
 /// to notify listeners of state changes.
 class SettingsController {
   /// Creates a [SettingsController] and initializes its state from storage.
-  SettingsController() {
-    _sharedPreferencesRepository = di<ISharedPreferencesRepository>();
-
+  SettingsController({ISharedPreferencesRepository? sharedPreferencesRepository})
+    : _sharedPreferencesRepository =
+          sharedPreferencesRepository ?? di<ISharedPreferencesRepository>() {
     build();
   }
 
-  late final ISharedPreferencesRepository _sharedPreferencesRepository;
+  final ISharedPreferencesRepository _sharedPreferencesRepository;
   final Debounce _debounce = Debounce(const Duration(milliseconds: 500));
 
   /// The current state of settings, exposed as a signal.

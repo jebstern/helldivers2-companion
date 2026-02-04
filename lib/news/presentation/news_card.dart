@@ -27,7 +27,7 @@ class NewsCard extends StatelessWidget {
             (BuildContext context, ImageProvider<Object> imageProvider) =>
                 FCard(
                   image: Hero(
-                    tag: newsArticle.date.toIso8601String(),
+                    tag: newsArticle.id,
                     child: Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
