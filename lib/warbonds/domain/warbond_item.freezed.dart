@@ -14,7 +14,13 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WarbondItem {
 
- String get name; String get imagePath; int get pages; int get order; int get credits;
+/// The name of the warbond.
+ String get name;/// The path to the image representing the warbond.
+ String get imagePath;/// The number of pages in the warbond.
+ int get pages;/// The display order of the warbond.
+ int get order;/// The cost of the warbond in Super Credits.
+ int get credits;/// Unique identifier for the warbond.
+ String get id;
 /// Create a copy of WarbondItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +31,16 @@ $WarbondItemCopyWith<WarbondItem> get copyWith => _$WarbondItemCopyWithImpl<Warb
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WarbondItem&&(identical(other.name, name) || other.name == name)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.pages, pages) || other.pages == pages)&&(identical(other.order, order) || other.order == order)&&(identical(other.credits, credits) || other.credits == credits));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WarbondItem&&(identical(other.name, name) || other.name == name)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.pages, pages) || other.pages == pages)&&(identical(other.order, order) || other.order == order)&&(identical(other.credits, credits) || other.credits == credits)&&(identical(other.id, id) || other.id == id));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,imagePath,pages,order,credits);
+int get hashCode => Object.hash(runtimeType,name,imagePath,pages,order,credits,id);
 
 @override
 String toString() {
-  return 'WarbondItem(name: $name, imagePath: $imagePath, pages: $pages, order: $order, credits: $credits)';
+  return 'WarbondItem(name: $name, imagePath: $imagePath, pages: $pages, order: $order, credits: $credits, id: $id)';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $WarbondItemCopyWith<$Res>  {
   factory $WarbondItemCopyWith(WarbondItem value, $Res Function(WarbondItem) _then) = _$WarbondItemCopyWithImpl;
 @useResult
 $Res call({
- String name, String imagePath, int pages, int order, int credits
+ String name, String imagePath, int pages, int order, int credits, String id
 });
 
 
@@ -62,14 +68,15 @@ class _$WarbondItemCopyWithImpl<$Res>
 
 /// Create a copy of WarbondItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? imagePath = null,Object? pages = null,Object? order = null,Object? credits = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? imagePath = null,Object? pages = null,Object? order = null,Object? credits = null,Object? id = null,}) {
   return _then(_self.copyWith(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,imagePath: null == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
 as String,pages: null == pages ? _self.pages : pages // ignore: cast_nullable_to_non_nullable
 as int,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
 as int,credits: null == credits ? _self.credits : credits // ignore: cast_nullable_to_non_nullable
-as int,
+as int,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -154,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String imagePath,  int pages,  int order,  int credits)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String imagePath,  int pages,  int order,  int credits,  String id)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WarbondItem() when $default != null:
-return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits);case _:
+return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits,_that.id);case _:
   return orElse();
 
 }
@@ -175,10 +182,10 @@ return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String imagePath,  int pages,  int order,  int credits)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String imagePath,  int pages,  int order,  int credits,  String id)  $default,) {final _that = this;
 switch (_that) {
 case _WarbondItem():
-return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits);case _:
+return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits,_that.id);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +202,10 @@ return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String imagePath,  int pages,  int order,  int credits)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String imagePath,  int pages,  int order,  int credits,  String id)?  $default,) {final _that = this;
 switch (_that) {
 case _WarbondItem() when $default != null:
-return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits);case _:
+return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits,_that.id);case _:
   return null;
 
 }
@@ -210,14 +217,21 @@ return $default(_that.name,_that.imagePath,_that.pages,_that.order,_that.credits
 
 
 class _WarbondItem implements WarbondItem {
-  const _WarbondItem({this.name = "", this.imagePath = "", this.pages = 1, this.order = 1, this.credits = 1});
+  const _WarbondItem({this.name = "", this.imagePath = "", this.pages = 1, this.order = 1, this.credits = 1, this.id = ""});
   
 
+/// The name of the warbond.
 @override@JsonKey() final  String name;
+/// The path to the image representing the warbond.
 @override@JsonKey() final  String imagePath;
+/// The number of pages in the warbond.
 @override@JsonKey() final  int pages;
+/// The display order of the warbond.
 @override@JsonKey() final  int order;
+/// The cost of the warbond in Super Credits.
 @override@JsonKey() final  int credits;
+/// Unique identifier for the warbond.
+@override@JsonKey() final  String id;
 
 /// Create a copy of WarbondItem
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +243,16 @@ _$WarbondItemCopyWith<_WarbondItem> get copyWith => __$WarbondItemCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WarbondItem&&(identical(other.name, name) || other.name == name)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.pages, pages) || other.pages == pages)&&(identical(other.order, order) || other.order == order)&&(identical(other.credits, credits) || other.credits == credits));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WarbondItem&&(identical(other.name, name) || other.name == name)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.pages, pages) || other.pages == pages)&&(identical(other.order, order) || other.order == order)&&(identical(other.credits, credits) || other.credits == credits)&&(identical(other.id, id) || other.id == id));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,imagePath,pages,order,credits);
+int get hashCode => Object.hash(runtimeType,name,imagePath,pages,order,credits,id);
 
 @override
 String toString() {
-  return 'WarbondItem(name: $name, imagePath: $imagePath, pages: $pages, order: $order, credits: $credits)';
+  return 'WarbondItem(name: $name, imagePath: $imagePath, pages: $pages, order: $order, credits: $credits, id: $id)';
 }
 
 
@@ -249,7 +263,7 @@ abstract mixin class _$WarbondItemCopyWith<$Res> implements $WarbondItemCopyWith
   factory _$WarbondItemCopyWith(_WarbondItem value, $Res Function(_WarbondItem) _then) = __$WarbondItemCopyWithImpl;
 @override @useResult
 $Res call({
- String name, String imagePath, int pages, int order, int credits
+ String name, String imagePath, int pages, int order, int credits, String id
 });
 
 
@@ -266,14 +280,15 @@ class __$WarbondItemCopyWithImpl<$Res>
 
 /// Create a copy of WarbondItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? imagePath = null,Object? pages = null,Object? order = null,Object? credits = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? imagePath = null,Object? pages = null,Object? order = null,Object? credits = null,Object? id = null,}) {
   return _then(_WarbondItem(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,imagePath: null == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
 as String,pages: null == pages ? _self.pages : pages // ignore: cast_nullable_to_non_nullable
 as int,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
 as int,credits: null == credits ? _self.credits : credits // ignore: cast_nullable_to_non_nullable
-as int,
+as int,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

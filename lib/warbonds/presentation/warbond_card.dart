@@ -26,7 +26,7 @@ class WarbondCard extends StatelessWidget {
             (BuildContext context, ImageProvider<Object> imageProvider) =>
                 FCard(
                   image: Hero(
-                    tag: warbondItem.imagePath,
+                    tag: "image-${warbondItem.id}",
                     child: Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -38,7 +38,7 @@ class WarbondCard extends StatelessWidget {
                     ),
                   ),
                   title: Hero(
-                    tag: warbondItem.name,
+                    tag: "title-${warbondItem.id}",
                     child: Text(warbondItem.name),
                   ),
                   subtitle: Text("${warbondItem.credits} Claimable credits"),

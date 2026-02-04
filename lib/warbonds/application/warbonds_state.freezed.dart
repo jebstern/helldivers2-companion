@@ -14,6 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WarbondsState {
 
+/// The list of available warbonds.
  List<WarbondItem> get warbonds;
 /// Create a copy of WarbondsState
 /// with the given fields replaced by the non-null parameter values.
@@ -209,7 +210,9 @@ class _WarbondsState implements WarbondsState {
   const _WarbondsState({final  List<WarbondItem> warbonds = const <WarbondItem>[]}): _warbonds = warbonds;
   
 
+/// The list of available warbonds.
  final  List<WarbondItem> _warbonds;
+/// The list of available warbonds.
 @override@JsonKey() List<WarbondItem> get warbonds {
   if (_warbonds is EqualUnmodifiableListView) return _warbonds;
   // ignore: implicit_dynamic_type
