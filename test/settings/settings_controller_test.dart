@@ -47,5 +47,35 @@ void main() {
 
       verify(() => mockRepo.writeInt(SharedPreferencesKey.level, 10)).called(1);
     });
+
+    test("setLevel should clamp level to 1 if value is less than 1 and persist it", () async {
+      when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(1);
+      when(() => mockRepo.writeInt(any(), any())).thenAnswer((_) async {});
+
+      final SettingsController controller = SettingsController();
+      controller.setLevel(0);
+
+      expect(controller.state.value.level, 1);
+
+      // Wait for debounce (500ms)
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+
+      verify(() => mockRepo.writeInt(SharedPreferencesKey.level, 1)).called(1);
+    });
+
+    test("setLevel should clamp level to 150 if value is greater than 150 and persist it", () async {
+      when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(1);
+      when(() => mockRepo.writeInt(any(), any())).thenAnswer((_) async {});
+
+      final SettingsController controller = SettingsController();
+      controller.setLevel(200);
+
+      expect(controller.state.value.level, 150);
+
+      // Wait for debounce (500ms)
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+
+      verify(() => mockRepo.writeInt(SharedPreferencesKey.level, 150)).called(1);
+    });
   });
 }
