@@ -36,6 +36,8 @@ abstract class NewsArticle with _$NewsArticle {
       id: id ?? "",
     );
   }
+
+  /// Named constructor for [NewsArticle] with required fields and defaults.
   factory NewsArticle.def({
     required DateTime date,
     @Default("") String title,

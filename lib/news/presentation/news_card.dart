@@ -5,10 +5,18 @@ import "package:forui/forui.dart";
 import "../../core/utils/app_extensions.dart";
 import "../domain/news_article.dart";
 
+/// A card widget that displays a summary of a [NewsArticle].
+///
+/// It shows the article's image, title, publication date, and a snippet
+/// of the text. It also indicates whether the article has been read.
 class NewsCard extends StatelessWidget {
+  /// Creates a [NewsCard] for the given [newsArticle].
   const NewsCard({required this.newsArticle, this.onTap, super.key});
 
+  /// The news article to display.
   final NewsArticle newsArticle;
+
+  /// Optional callback when the card is tapped.
   final VoidCallback? onTap;
 
   @override

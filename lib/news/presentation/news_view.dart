@@ -11,6 +11,7 @@ import "../domain/news_article.dart";
 import "news_article_page.dart";
 import "news_greeting.dart";
 import "news_list.dart";
+import "news_widgets.dart";
 import "pagination.dart";
 
 class NewsView extends StatelessWidget {
@@ -46,11 +47,11 @@ class NewsView extends StatelessWidget {
     NewsState newsState,
   ) {
     if (newsState.status.isLoading) {
-      return const _NewsLoading();
+      return const NewsLoading();
     } else if (newsState.status.hasError) {
-      return _NewsError(error: newsState.status.error.toString());
+      return NewsError(error: newsState.status.error.toString());
     } else if (newsState.news.isEmpty) {
-      return const _NewsEmpty();
+      return const NewsEmpty();
     } else {
       return NewsList(
         articles: controller.getCurrentPageItems(),
@@ -70,38 +71,5 @@ class NewsView extends StatelessWidget {
   }
 }
 
-class _NewsLoading extends StatelessWidget {
-  const _NewsLoading();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: CircularProgressIndicator());
-  }
-}
-
-class _NewsError extends StatelessWidget {
-  const _NewsError({required this.error});
-
-  final String error;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        "Error: $error",
-        style: const TextStyle(color: Colors.red),
-      ),
-    );
-  }
-}
-
-class _NewsEmpty extends StatelessWidget {
-  const _NewsEmpty();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("No news available."));
-  }
-}
 
 
