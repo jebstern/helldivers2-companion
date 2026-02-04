@@ -20,7 +20,7 @@ class _SettingsViewState extends State<SettingsView> {
     final FTypography typography = context.theme.typography;
     final SettingsController controller = di<SettingsController>();
 
-    return Watch<Column>((BuildContext context) {
+    return Watch((BuildContext context) {
       final SettingsState settingsState = controller.state.watch(context);
 
       return Column(

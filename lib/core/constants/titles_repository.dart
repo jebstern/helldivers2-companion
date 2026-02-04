@@ -2,8 +2,10 @@
 
 import "../../titles/domain/player_title.dart";
 
+/// A repository that provides a list of player titles.
 class TitlesRepository {
-  static const List<PlayerTitle> playerTitles = <PlayerTitle>[
+  /// The list of all available player titles.
+  final List<PlayerTitle> playerTitles = const <PlayerTitle>[
     PlayerTitle(
       title: "Cadet",
       source: "The default title for all Helldivers",

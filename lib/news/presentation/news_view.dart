@@ -20,24 +20,27 @@ class NewsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NewsController controller = di<NewsController>();
-    final NewsState newsState = controller.state.watch(context);
 
     return BaseView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const NewsGreeting(),
-          const SizedBox(height: 32),
-          _buildBody(context, controller, newsState),
-          const SizedBox(height: 32),
-          ResponsivePagination(
-            totalPages: newsState.pages,
-            currentPage: newsState.currentPage,
-            onPageChanged: controller.onPageChanged,
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
+      child: Watch((BuildContext context) {
+        final NewsState newsState = controller.state.watch(context);
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const NewsGreeting(),
+            const SizedBox(height: 32),
+            _buildBody(context, controller, newsState),
+            const SizedBox(height: 32),
+            ResponsivePagination(
+              totalPages: newsState.pages,
+              currentPage: newsState.currentPage,
+              onPageChanged: controller.onPageChanged,
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
+      }),
     );
   }
 

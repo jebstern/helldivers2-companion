@@ -12,6 +12,7 @@ import "core/utils/hd_logger.dart";
 import "helldivers_app.dart";
 import "news/application/news_controller.dart";
 import "settings/application/settings_controller.dart";
+import "titles/application/titles_controller.dart";
 import "warbonds/application/warbonds_controller.dart";
 
 late final Settings settings;
@@ -38,6 +39,7 @@ void setupDi({required SharedPreferences sharedPreferences}) {
     ..registerLazySingleton(NewsController.new)
     ..registerLazySingleton(SettingsController.new)
     ..registerLazySingleton(WarbondsController.new)
+    ..registerLazySingleton(TitlesController.new)
     ..registerLazySingleton(TitlesRepository.new)
     ..registerLazySingleton<ISharedPreferencesRepository>(() {
       return SharedPreferencesRepository(sharedPreferences: sharedPreferences);
