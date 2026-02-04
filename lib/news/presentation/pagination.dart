@@ -74,17 +74,15 @@ class ResponsivePagination extends StatelessWidget {
           }
         }
 
-        final List<Widget> children = <Widget>[];
-
-        // left arrow
-        children.add(
+        final List<Widget> children = <Widget>[
+          // left arrow
           _PaginationArrow(
             icon: Icons.chevron_left,
             enabled: currentPage > 1,
             onTap: () => onPageChanged((currentPage - 1).clamp(1, totalPages)),
             buttonWidth: buttonWidth,
           ),
-        );
+        ];
 
         // optional "1" and ellipsis when start > 1
         if (start > 1) {
@@ -95,8 +93,9 @@ class ResponsivePagination extends StatelessWidget {
               onTap: () => onPageChanged(1),
               buttonWidth: buttonWidth,
               textStyle: currentPage == 1 ? activeTextStyle : pageTextStyle,
-              decoration:
-                  currentPage == 1 ? activeDecoration : buttonDecoration,
+              decoration: currentPage == 1
+                  ? activeDecoration
+                  : buttonDecoration,
             ),
           );
           if (start > 2) {
@@ -120,8 +119,9 @@ class ResponsivePagination extends StatelessWidget {
               onTap: () => onPageChanged(i),
               buttonWidth: buttonWidth,
               textStyle: i == currentPage ? activeTextStyle : pageTextStyle,
-              decoration:
-                  i == currentPage ? activeDecoration : buttonDecoration,
+              decoration: i == currentPage
+                  ? activeDecoration
+                  : buttonDecoration,
             ),
           );
         }
@@ -137,8 +137,9 @@ class ResponsivePagination extends StatelessWidget {
               isActive: currentPage == totalPages,
               onTap: () => onPageChanged(totalPages),
               buttonWidth: buttonWidth,
-              textStyle:
-                  currentPage == totalPages ? activeTextStyle : pageTextStyle,
+              textStyle: currentPage == totalPages
+                  ? activeTextStyle
+                  : pageTextStyle,
               decoration: currentPage == totalPages
                   ? activeDecoration
                   : buttonDecoration,
@@ -175,7 +176,6 @@ class ResponsivePagination extends StatelessWidget {
       },
     );
   }
-
 }
 
 class _PaginationArrow extends StatelessWidget {
@@ -199,9 +199,7 @@ class _PaginationArrow extends StatelessWidget {
       child: TextButton(
         style: TextButton.styleFrom(
           padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         ),
         onPressed: enabled ? onTap : null,
         child: Icon(icon),
@@ -230,10 +228,12 @@ class _PageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle effectiveTextStyle = (isActive
+    final TextStyle effectiveTextStyle =
+        (isActive
             ? (textStyle ??
-                theme.textTheme.bodyMedium
-                    ?.copyWith(fontWeight: FontWeight.bold))
+                  theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ))
             : (textStyle ?? theme.textTheme.bodyMedium)) ??
         const TextStyle();
 

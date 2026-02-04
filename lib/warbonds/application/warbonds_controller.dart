@@ -5,7 +5,6 @@ import "../../core/utils/hd_logger.dart";
 import "../domain/warbond_item.dart";
 import "warbonds_state.dart";
 
-
 /// A controller that manages the warbonds state of the application.
 ///
 /// It listens to warbond updates from Firebase Firestore and handles sorting.

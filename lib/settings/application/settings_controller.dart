@@ -33,7 +33,7 @@ class SettingsController {
   void build() {
     final int level =
         _sharedPreferencesRepository.readInt(SharedPreferencesKey.level) ??
-            PlayerConstants.minLevel;
+        PlayerConstants.minLevel;
 
     state.value = SettingsState(level: level);
   }
@@ -43,8 +43,10 @@ class SettingsController {
   /// The [level] is clamped between [PlayerConstants.minLevel] and
   /// [PlayerConstants.maxLevel].
   void setLevel(int level) {
-    final int clampedLevel =
-        level.clamp(PlayerConstants.minLevel, PlayerConstants.maxLevel);
+    final int clampedLevel = level.clamp(
+      PlayerConstants.minLevel,
+      PlayerConstants.maxLevel,
+    );
     state.value = state.value.copyWith(level: clampedLevel);
     _debounce(() {
       unawaited(

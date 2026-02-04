@@ -13,7 +13,6 @@ import "../../main.dart";
 import "../domain/news_article.dart";
 import "news_state.dart";
 
-
 /// A controller that manages the news state of the application.
 ///
 /// It listens to news updates from Firebase Firestore and handles pagination.
@@ -63,12 +62,12 @@ class NewsController {
           } catch (error) {
             hdLogger.warning(
               "Error parsing data:"
-                  ' (element["date"]: \${element["date"]}),',
-              ' (element["title"]: \${element["title"]}),'
-                  ' (element["text"]: \${element["text"]}),'
-                  ' (element["imagePath"]: \${element["imagePath"]})'
-                  ' (element["id"]: \${element["id"]}).'
-                  " Error: \$error",
+                  r' (element["date"]: ${element["date"]}),',
+              r' (element["title"]: ${element["title"]}),'
+                  r' (element["text"]: ${element["text"]}),'
+                  r' (element["imagePath"]: ${element["imagePath"]})'
+                  r' (element["id"]: ${element["id"]}).'
+                  r" Error: $error",
             );
           }
 
@@ -95,7 +94,7 @@ class NewsController {
         _updateState(newsArticles);
       },
       onError: (Object? error) {
-        hdLogger.severe("Error fetching news: \$error");
+        hdLogger.severe(r"Error fetching news: $error");
       },
     );
   }

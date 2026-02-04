@@ -4,15 +4,16 @@ import "package:helldivers2_companion/core/utils/app_extensions.dart";
 void main() {
   group("StringX extensions", () {
     test(
-        "capitalize should capitalize the first letter and lowercase the rest",
-        () {
-      expect("hello".capitalize, "Hello");
-      expect("HELLO".capitalize, "Hello");
-      expect("hELLO".capitalize, "Hello");
-      expect("".capitalize, "");
-      const String? nullString = null;
-      expect(nullString.capitalize, "");
-    });
+      "capitalize should capitalize the first letter and lowercase the rest",
+      () {
+        expect("hello".capitalize, "Hello");
+        expect("HELLO".capitalize, "Hello");
+        expect("hELLO".capitalize, "Hello");
+        expect("".capitalize, "");
+        const String? nullString = null;
+        expect(nullString.capitalize, "");
+      },
+    );
 
     test("equalsIgnoreCase should compare strings ignoring case", () {
       expect("hello".equalsIgnoreCase("HELLO"), isTrue);

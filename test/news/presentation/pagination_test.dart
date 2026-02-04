@@ -4,7 +4,9 @@ import "package:helldivers2_companion/news/presentation/pagination.dart";
 
 void main() {
   group("ResponsivePagination", () {
-    testWidgets("renders current page and neighbors", (WidgetTester tester) async {
+    testWidgets("renders current page and neighbors", (
+      WidgetTester tester,
+    ) async {
       int? selectedPage;
 
       await tester.pumpWidget(
