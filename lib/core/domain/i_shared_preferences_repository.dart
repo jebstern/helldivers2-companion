@@ -1,4 +1,4 @@
-import "../infrastructure/shared_preferences_repository.dart";
+import "package:helldivers2_companion/core/infrastructure/shared_preferences_repository.dart";
 
 abstract class ISharedPreferencesRepository {
   Future<void> clear();
