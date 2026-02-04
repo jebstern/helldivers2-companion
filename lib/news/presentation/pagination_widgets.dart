@@ -33,6 +33,97 @@ class PaginationArrow extends StatelessWidget {
   }
 }
 
+typedef PageButtonBuilder = Widget Function(int page);
+
+class PageButtonsList extends StatelessWidget {
+  const PageButtonsList({
+    required this.start,
+    required this.end,
+    required this.totalPages,
+    required this.buttonWidth,
+    required this.pageBuilder,
+    required this.spacing,
+    super.key,
+  });
+
+  final int start;
+  final int end;
+  final int totalPages;
+  final double buttonWidth;
+  final PageButtonBuilder pageBuilder;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> children = <Widget>[];
+
+    if (start > 1) {
+      children.add(pageBuilder(1));
+      if (start > 2) {
+        children.add(PaginationEllipsis(buttonWidth: buttonWidth));
+      }
+    }
+
+    for (int i = start; i <= end; i++) {
+      if (i == 1 && start > 1) {
+        continue;
+      }
+      if (i == totalPages && end < totalPages) {
+        continue;
+      }
+
+      children.add(pageBuilder(i));
+    }
+
+    if (end < totalPages) {
+      if (end < totalPages - 1) {
+        children.add(PaginationEllipsis(buttonWidth: buttonWidth));
+      }
+      children.add(pageBuilder(totalPages));
+    }
+
+    final List<Widget> spaced = <Widget>[];
+    for (int i = 0; i < children.length; i++) {
+      spaced.add(children[i]);
+      if (i != children.length - 1) {
+        spaced.add(SizedBox(width: spacing));
+      }
+    }
+
+    return Row(mainAxisSize: MainAxisSize.min, children: spaced);
+  }
+}
+
+class PaginationContainer extends StatelessWidget {
+  const PaginationContainer({
+    required this.children,
+    required this.spacing,
+    super.key,
+  });
+
+  final List<Widget> children;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> spaced = <Widget>[];
+    for (int i = 0; i < children.length; i++) {
+      spaced.add(children[i]);
+      if (i != children.length - 1) {
+        spaced.add(SizedBox(width: spacing));
+      }
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(),
+        child: Row(mainAxisSize: MainAxisSize.min, children: spaced),
+      ),
+    );
+  }
+}
+
 class PageButton extends StatelessWidget {
   const PageButton({
     required this.page,

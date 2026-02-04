@@ -10,7 +10,8 @@ import "warbonds_state.dart";
 /// It listens to warbond updates from Firebase Firestore and handles sorting.
 class WarbondsController {
   /// Creates a [WarbondsController] and starts listening to warbond updates.
-  WarbondsController() {
+  WarbondsController({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance {
     _listenToWarbondUpdates();
   }
 
@@ -19,53 +20,28 @@ class WarbondsController {
     const WarbondsState(),
   );
 
-  void _listenToWarbondUpdates() {
-    final FirebaseFirestore db = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore;
 
-    final CollectionReference<Map<String, dynamic>> newsCollection = db
+  void _listenToWarbondUpdates() {
+    final CollectionReference<Map<String, dynamic>> newsCollection = _firestore
         .collection("warbonds");
     newsCollection.snapshots().listen(
       (QuerySnapshot<Map<String, dynamic>> event) {
         List<WarbondItem> warbondItems = <WarbondItem>[];
 
-        final List<Map<String, dynamic>> documents = event.docs
-            .map((QueryDocumentSnapshot<Map<String, dynamic>> e) => e.data())
-            .toList();
+        final List<Map<String, dynamic>> documents = event.docs.map((
+          QueryDocumentSnapshot<Map<String, dynamic>> e,
+        ) {
+          final Map<String, dynamic> data = e.data();
+          data["id"] = e.id;
+          return data;
+        }).toList();
 
         for (final Map<String, dynamic> element in documents) {
-          String name = "";
-          String imagePath = "";
-          int pages = 1;
-          int order = 1;
-          int credits = 1;
-
-          try {
-            name = element["name"] as String;
-            imagePath = element["imagePath"] as String;
-            order = element["order"] as int;
-            pages = element["pages"] as int;
-            credits = element["credits"] as int;
-          } catch (error) {
-            hdLogger.warning(
-              "Error parsing data:"
-              ' (element["name"]: ${element["name"]}),'
-              ' (element["imagePath"]: ${element["imagePath"]})'
-              ' (element["order"]: ${element["order"]}),'
-              ' (element["pages"]: ${element["pages"]}),'
-              ' (element["credits"]: ${element["credits"]}),'
-              " Error: $error",
-            );
+          final WarbondItem? item = _parseWarbondItem(element);
+          if (item != null) {
+            warbondItems.add(item);
           }
-
-          warbondItems.add(
-            WarbondItem(
-              imagePath: imagePath,
-              name: name,
-              pages: pages,
-              order: order,
-              credits: credits,
-            ),
-          );
         }
 
         warbondItems = _sortWarbondItems(warbondItems);
@@ -83,6 +59,38 @@ class WarbondsController {
     );
 
     return warbondItems;
+  }
+
+  /// Safely parses a [WarbondItem] from a Firestore document map.
+  ///
+  /// Returns null if parsing fails or mandatory fields are missing or malformed.
+  WarbondItem? _parseWarbondItem(Map<String, dynamic> element) {
+    try {
+      final String id = element["id"] as String? ?? "";
+
+      // Sentinel 🛡️: Validate data types and mandatory fields
+      if (element["name"] is! String ||
+          element["imagePath"] is! String ||
+          element["order"] is! int ||
+          element["pages"] is! int ||
+          element["credits"] is! int ||
+          id.isEmpty) {
+        hdLogger.warning("Warbond item has malformed data or missing ID, skipping. ID: $id");
+        return null;
+      }
+
+      return WarbondItem(
+        name: element["name"] as String,
+        imagePath: element["imagePath"] as String,
+        order: element["order"] as int,
+        pages: element["pages"] as int,
+        credits: element["credits"] as int,
+        id: id,
+      );
+    } catch (error, stackTrace) {
+      hdLogger.severe("Error parsing warbond item", error, stackTrace);
+      return null;
+    }
   }
 
   void _updateState(List<WarbondItem> warbondItems) {

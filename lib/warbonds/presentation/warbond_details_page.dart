@@ -28,7 +28,7 @@ class WarbondDetailsPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Hero(
-              tag: warbondItem.imagePath,
+              tag: "image-${warbondItem.id}",
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: CachedNetworkImage(
@@ -42,7 +42,7 @@ class WarbondDetailsPage extends StatelessWidget {
               ),
             ),
             Hero(
-              tag: warbondItem.name,
+              tag: "title-${warbondItem.id}",
               child: Text(
                 warbondItem.name,
                 textAlign: TextAlign.center,
