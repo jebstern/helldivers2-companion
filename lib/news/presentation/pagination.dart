@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "pagination_widgets.dart";
 
 typedef PageChanged = void Function(int page);
 
@@ -46,14 +47,14 @@ class ResponsivePagination extends StatelessWidget {
         final _PaginationRange range = _calculateRange(constraints.maxWidth);
 
         final List<Widget> children = <Widget>[
-          _PaginationArrow(
+          PaginationArrow(
             icon: Icons.chevron_left,
             enabled: currentPage > 1,
             onTap: () => onPageChanged((currentPage - 1).clamp(1, totalPages)),
             buttonWidth: buttonWidth,
           ),
           ..._buildPageButtons(range),
-          _PaginationArrow(
+          PaginationArrow(
             icon: Icons.chevron_right,
             enabled: currentPage < totalPages,
             onTap: () => onPageChanged((currentPage + 1).clamp(1, totalPages)),
@@ -103,7 +104,7 @@ class ResponsivePagination extends StatelessWidget {
     if (range.start > 1) {
       children.add(_buildPageButton(1));
       if (range.start > 2) {
-        children.add(_Ellipsis(buttonWidth: buttonWidth));
+        children.add(PaginationEllipsis(buttonWidth: buttonWidth));
       }
     }
 
@@ -120,7 +121,7 @@ class ResponsivePagination extends StatelessWidget {
 
     if (range.end < totalPages) {
       if (range.end < totalPages - 1) {
-        children.add(_Ellipsis(buttonWidth: buttonWidth));
+        children.add(PaginationEllipsis(buttonWidth: buttonWidth));
       }
       children.add(_buildPageButton(totalPages));
     }
@@ -129,7 +130,7 @@ class ResponsivePagination extends StatelessWidget {
   }
 
   Widget _buildPageButton(int page) {
-    return _PageButton(
+    return PageButton(
       page: page,
       isActive: page == currentPage,
       onTap: () => onPageChanged(page),
@@ -162,99 +163,4 @@ class _PaginationRange {
   const _PaginationRange({required this.start, required this.end});
   final int start;
   final int end;
-}
-
-class _PaginationArrow extends StatelessWidget {
-  const _PaginationArrow({
-    required this.icon,
-    required this.onTap,
-    required this.enabled,
-    required this.buttonWidth,
-  });
-
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool enabled;
-  final double buttonWidth;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: buttonWidth,
-      height: 36,
-      child: TextButton(
-        style: TextButton.styleFrom(
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-        ),
-        onPressed: enabled ? onTap : null,
-        child: Icon(icon),
-      ),
-    );
-  }
-}
-
-class _PageButton extends StatelessWidget {
-  const _PageButton({
-    required this.page,
-    required this.isActive,
-    required this.onTap,
-    required this.buttonWidth,
-    this.textStyle,
-    this.decoration,
-  });
-
-  final int page;
-  final bool isActive;
-  final VoidCallback onTap;
-  final double buttonWidth;
-  final TextStyle? textStyle;
-  final Decoration? decoration;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextStyle effectiveTextStyle =
-        (isActive
-            ? (textStyle ??
-                  theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ))
-            : (textStyle ?? theme.textTheme.bodyMedium)) ??
-        const TextStyle();
-
-    final Decoration effectiveDecoration = isActive
-        ? (decoration ??
-              BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(6),
-              ))
-        : (decoration ?? const BoxDecoration());
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: buttonWidth,
-        height: 36,
-        alignment: Alignment.center,
-        decoration: effectiveDecoration,
-        child: Text(page.toString(), style: effectiveTextStyle),
-      ),
-    );
-  }
-}
-
-class _Ellipsis extends StatelessWidget {
-  const _Ellipsis({required this.buttonWidth});
-
-  final double buttonWidth;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: buttonWidth / 1.6,
-      height: 36,
-      child: const Center(child: Text("…")),
-    );
-  }
 }

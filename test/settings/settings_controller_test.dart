@@ -24,14 +24,18 @@ void main() {
     test("initial state should be level 1 if no level is stored", () {
       when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(null);
 
-      final SettingsController controller = SettingsController();
+      final SettingsController controller = SettingsController(
+        sharedPreferencesRepository: mockRepo,
+      );
       expect(controller.state.value.level, 1);
     });
 
     test("initial state should be stored level", () {
       when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(50);
 
-      final SettingsController controller = SettingsController();
+      final SettingsController controller = SettingsController(
+        sharedPreferencesRepository: mockRepo,
+      );
       expect(controller.state.value.level, 50);
     });
 
@@ -39,7 +43,9 @@ void main() {
       when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(1);
       when(() => mockRepo.writeInt(any(), any())).thenAnswer((_) async {});
 
-      final SettingsController controller = SettingsController()..setLevel(10);
+      final SettingsController controller = SettingsController(
+        sharedPreferencesRepository: mockRepo,
+      )..setLevel(10);
 
       expect(controller.state.value.level, 10);
 
@@ -55,7 +61,9 @@ void main() {
         when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(1);
         when(() => mockRepo.writeInt(any(), any())).thenAnswer((_) async {});
 
-        final SettingsController controller = SettingsController()..setLevel(0);
+        final SettingsController controller = SettingsController(
+          sharedPreferencesRepository: mockRepo,
+        )..setLevel(0);
 
         expect(controller.state.value.level, 1);
 
@@ -74,8 +82,9 @@ void main() {
         when(() => mockRepo.readInt(SharedPreferencesKey.level)).thenReturn(1);
         when(() => mockRepo.writeInt(any(), any())).thenAnswer((_) async {});
 
-        final SettingsController controller = SettingsController()
-          ..setLevel(200);
+        final SettingsController controller = SettingsController(
+          sharedPreferencesRepository: mockRepo,
+        )..setLevel(200);
 
         expect(controller.state.value.level, 150);
 

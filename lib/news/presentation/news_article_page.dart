@@ -31,7 +31,7 @@ class NewsArticlePage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Hero(
-              tag: newsArticle.date.toIso8601String(),
+              tag: newsArticle.id,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: CachedNetworkImage(

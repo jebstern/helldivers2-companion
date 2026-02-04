@@ -67,19 +67,25 @@ class NewsController {
   /// Returns null if parsing fails or mandatory fields (like title) are missing.
   NewsArticle? _parseNewsArticle(Map<String, dynamic> element) {
     try {
-      final dynamic rawDate = element["date"];
-      final DateTime date =
-          rawDate is Timestamp ? rawDate.toDate() : DateTime.now();
-
-      final String title = element["title"] as String? ?? "";
-      final String text = element["text"] as String? ?? "";
-      final String imagePath = element["imagePath"] as String? ?? "";
       final String id = element["id"] as String? ?? "";
 
-      if (title.isEmpty) {
-        hdLogger.warning("News article missing title, skipping. ID: $id");
+      // Validate required fields and types as per Sentinel 🛡️ guidelines
+      if (element["date"] is! Timestamp ||
+          element["title"] is! String ||
+          element["text"] is! String ||
+          element["imagePath"] is! String ||
+          id.isEmpty) {
+        hdLogger.warning(
+          "News article has malformed data or missing ID, skipping. ID: $id",
+        );
         return null;
       }
+
+      final Timestamp timestamp = element["date"] as Timestamp;
+      final DateTime date = timestamp.toDate();
+      final String title = element["title"] as String;
+      final String text = element["text"] as String;
+      final String imagePath = element["imagePath"] as String;
 
       final bool read = _sharedPreferencesRepository.read(title) != null;
 
@@ -107,6 +113,9 @@ class NewsController {
     return sorted;
   }
 
+  /// Updates the controller's state with a new list of articles.
+  ///
+  /// Recalculates the total number of pages based on the [newsArticles] count.
   void _updateState(List<NewsArticle> newsArticles) {
     bool newArticles = false;
     if (state.value.news.isNotEmpty) {
