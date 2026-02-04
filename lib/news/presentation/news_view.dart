@@ -45,40 +45,81 @@ class NewsView extends StatelessWidget {
     NewsController controller,
     NewsState newsState,
   ) {
-    final List<NewsArticle> currentPageItems = controller.getCurrentPageItems();
-
     if (newsState.status.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const _NewsLoading();
     } else if (newsState.status.hasError) {
-      return Center(
-        child: Text(
-          "Error: ${newsState.status.error}",
-          style: const TextStyle(color: Colors.red),
-        ),
-      );
+      return _NewsError(error: newsState.status.error.toString());
     } else if (newsState.news.isEmpty) {
-      return const Center(child: Text("No news available."));
+      return const _NewsEmpty();
     } else {
-      return Column(
-        spacing: 32,
-        children: currentPageItems.map((NewsArticle e) {
-          return NewsCard(
-            newsArticle: e,
-            onTap: () {
-              controller.markAsRead(e);
-
-              unawaited(
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        NewsArticlePage(newsArticle: e),
-                  ),
-                ),
-              );
-            },
+      return _NewsList(
+        articles: controller.getCurrentPageItems(),
+        onArticleTap: (NewsArticle article) {
+          controller.markAsRead(article);
+          unawaited(
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) =>
+                    NewsArticlePage(newsArticle: article),
+              ),
+            ),
           );
-        }).toList(),
+        },
       );
     }
+  }
+}
+
+class _NewsLoading extends StatelessWidget {
+  const _NewsLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: CircularProgressIndicator());
+  }
+}
+
+class _NewsError extends StatelessWidget {
+  const _NewsError({required this.error});
+
+  final String error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        "Error: $error",
+        style: const TextStyle(color: Colors.red),
+      ),
+    );
+  }
+}
+
+class _NewsEmpty extends StatelessWidget {
+  const _NewsEmpty();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("No news available."));
+  }
+}
+
+class _NewsList extends StatelessWidget {
+  const _NewsList({required this.articles, required this.onArticleTap});
+
+  final List<NewsArticle> articles;
+  final void Function(NewsArticle) onArticleTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 32,
+      children: articles.map((NewsArticle e) {
+        return NewsCard(
+          newsArticle: e,
+          onTap: () => onArticleTap(e),
+        );
+      }).toList(),
+    );
   }
 }

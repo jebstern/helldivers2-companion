@@ -2,8 +2,10 @@ import "package:freezed_annotation/freezed_annotation.dart";
 
 part "news_article.freezed.dart";
 
+/// Represents a news article in the application.
 @freezed
 abstract class NewsArticle with _$NewsArticle {
+  /// Default factory constructor for [NewsArticle].
   factory NewsArticle({
     DateTime? date,
     String? title,

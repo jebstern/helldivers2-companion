@@ -18,19 +18,21 @@ import "news_state.dart";
 /// It listens to news updates from Firebase Firestore and handles pagination.
 class NewsController {
   /// Creates a [NewsController] and starts listening to news updates.
-  NewsController() {
+  NewsController({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance {
     _sharedPreferencesRepository = di<ISharedPreferencesRepository>();
 
     _listenToNewsUpdates();
   }
 
+  /// The current state of news articles and pagination.
   final FlutterSignal<NewsState> state = signal<NewsState>(NewsState.empty());
   late final ISharedPreferencesRepository _sharedPreferencesRepository;
+  final FirebaseFirestore _firestore;
 
+  /// Starts listening to the "news" collection in Firestore.
   void _listenToNewsUpdates() {
-    final FirebaseFirestore db = FirebaseFirestore.instance;
-
-    final CollectionReference<Map<String, dynamic>> newsCollection = db
+    final CollectionReference<Map<String, dynamic>> newsCollection = _firestore
         .collection("news");
     newsCollection.snapshots().listen(
       (QuerySnapshot<Map<String, dynamic>> event) {
@@ -45,49 +47,10 @@ class NewsController {
         }).toList();
 
         for (final Map<String, dynamic> element in documents) {
-          Timestamp timestamp;
-          DateTime date = DateTime.now();
-          String title = "";
-          String text = "";
-          String imagePath = "";
-          String id = "";
-
-          try {
-            timestamp = element["date"] as Timestamp;
-            date = timestamp.toDate();
-            title = element["title"] as String;
-            text = element["text"] as String;
-            imagePath = element["imagePath"] as String;
-            id = element["id"] as String;
-          } catch (error) {
-            hdLogger.warning(
-              "Error parsing data:"
-                  r' (element["date"]: ${element["date"]}),',
-              r' (element["title"]: ${element["title"]}),'
-                  r' (element["text"]: ${element["text"]}),'
-                  r' (element["imagePath"]: ${element["imagePath"]})'
-                  r' (element["id"]: ${element["id"]}).'
-                  r" Error: $error",
-            );
+          final NewsArticle? article = _parseNewsArticle(element);
+          if (article != null) {
+            newsArticles.add(article);
           }
-
-          bool read = false;
-          if (title.isNotEmpty) {
-            final String? hasRead = _sharedPreferencesRepository.read(title);
-
-            read = hasRead != null;
-          }
-
-          newsArticles.add(
-            NewsArticle(
-              date: date,
-              title: title,
-              text: text,
-              imagePath: imagePath,
-              read: read,
-              id: id,
-            ),
-          );
         }
 
         newsArticles = _sortNewsByDate(newsArticles);
@@ -99,6 +62,42 @@ class NewsController {
     );
   }
 
+  /// Safely parses a [NewsArticle] from a Firestore document map.
+  ///
+  /// Returns null if parsing fails or mandatory fields (like title) are missing.
+  NewsArticle? _parseNewsArticle(Map<String, dynamic> element) {
+    try {
+      final dynamic rawDate = element["date"];
+      final DateTime date =
+          rawDate is Timestamp ? rawDate.toDate() : DateTime.now();
+
+      final String title = element["title"] as String? ?? "";
+      final String text = element["text"] as String? ?? "";
+      final String imagePath = element["imagePath"] as String? ?? "";
+      final String id = element["id"] as String? ?? "";
+
+      if (title.isEmpty) {
+        hdLogger.warning("News article missing title, skipping. ID: $id");
+        return null;
+      }
+
+      final bool read = _sharedPreferencesRepository.read(title) != null;
+
+      return NewsArticle(
+        date: date,
+        title: title,
+        text: text,
+        imagePath: imagePath,
+        read: read,
+        id: id,
+      );
+    } catch (error, stackTrace) {
+      hdLogger.severe("Error parsing news article", error, stackTrace);
+      return null;
+    }
+  }
+
+  /// Sorts the list of news articles by date in descending order.
   List<NewsArticle> _sortNewsByDate(List<NewsArticle> newsArticles) {
     final List<NewsArticle> sorted = newsArticles
         .sortWithDate((NewsArticle instance) => instance.date)

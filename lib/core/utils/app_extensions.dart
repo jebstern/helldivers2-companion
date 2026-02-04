@@ -27,6 +27,11 @@ extension BuildContextX on BuildContext {
   }
 }
 
+final DateFormat _yyyyMMddHHmmssSFormat = DateFormat("yyyy-MM-dd HH:mm:ss.S");
+final DateFormat _yyyyMMddZHHmmssSFormat = DateFormat("yyyy-MM-ddTHH:mm:ss.S");
+final DateFormat _yyyyMMddZHHmmssFormat = DateFormat("yyyy-MM-ddTHH:mm:ss");
+final DateFormat _yyyyMMddHHmmssFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
+
 extension StringX on String? {
   bool get isBlank => this?.isEmpty ?? true;
   bool get isNotNullOrEmpty => this?.isNotEmpty ?? false;
@@ -45,11 +50,7 @@ extension StringX on String? {
     if (this == null) {
       return null;
     }
-    final DateTime dt = DateFormat(
-      "yyyy-MM-dd HH:mm:ss.S",
-    ).parse(this!, true).toLocal();
-
-    return dt;
+    return _yyyyMMddHHmmssSFormat.parse(this!, true).toLocal();
   }
 
   DateTime? get notificationDatetime {
@@ -62,44 +63,28 @@ extension StringX on String? {
       date = date.substring(0, 23);
     }
 
-    final DateTime dateTime = DateFormat(
-      "yyyy-MM-dd HH:mm:ss.S",
-    ).parse(date, true).toLocal();
-
-    return dateTime;
+    return _yyyyMMddHHmmssSFormat.parse(date, true).toLocal();
   }
 
   DateTime? get yyyyMMddZHHmmssS {
     if (this == null) {
       return null;
     }
-    final DateTime dt = DateFormat(
-      "yyyy-MM-ddTHH:mm:ss.S",
-    ).parse(this!, true).toLocal();
-
-    return dt;
+    return _yyyyMMddZHHmmssSFormat.parse(this!, true).toLocal();
   }
 
   DateTime? get yyyyMMddZHHmmss {
     if (this == null) {
       return null;
     }
-    final DateTime dt = DateFormat(
-      "yyyy-MM-ddTHH:mm:ss",
-    ).parse(this!, true).toLocal();
-
-    return dt;
+    return _yyyyMMddZHHmmssFormat.parse(this!, true).toLocal();
   }
 
   DateTime? get yyyyMMddHHmmss {
     if (this == null) {
       return null;
     }
-    final DateTime dt = DateFormat(
-      "yyyy-MM-dd HH:mm:ss",
-    ).parse(this!, true).toLocal();
-
-    return dt;
+    return _yyyyMMddHHmmssFormat.parse(this!, true).toLocal();
   }
 
   double get parseDouble {
@@ -115,26 +100,42 @@ extension StringX on String? {
   String? get dotifie => this?.replaceAll(",", ".");
 }
 
+final DateFormat _edmFormat = DateFormat("EEEE, MMMM d");
+final DateFormat _eeeFormat = DateFormat("EEE");
+final DateFormat _eeedFormat = DateFormat("EEE d");
+final DateFormat _mmmFormat = DateFormat("MMM");
+final DateFormat _mmmmFormat = DateFormat("MMMM");
+final DateFormat _mmmmyFormat = DateFormat("MMMM, y");
+final DateFormat _mmmdFormat = DateFormat("MMM d");
+final DateFormat _mmmdyFormat = DateFormat("MMM d, y");
+final DateFormat _yFormat = DateFormat("y");
+final DateFormat _hhmmFormat = DateFormat("HH:mm");
+final DateFormat _hmmaFormat = DateFormat("h:mm a");
+final DateFormat _hmmFormat = DateFormat("h:mm");
+final DateFormat _yyyyMMddHHmmssZFormat = DateFormat("yyyy-MM-dd HH:mm:ss'Z'");
+final DateFormat _yyyyMMddHHmmssDateTimeFormat =
+    DateFormat("yyyy-MM-dd HH:mm:ss");
+final DateFormat _mmmdhmmaFormat = DateFormat("MMM d @ h:mm a");
+
 extension DateTimeX on DateTime {
-  String get toEdm => DateFormat("EEEE, MMMM d").format(this);
-  String get toEEE => DateFormat("EEE").format(this);
-  String get toEEEd => DateFormat("EEE d").format(this);
-  String get toMMM => DateFormat("MMM").format(this);
-  String get toMMMM => DateFormat("MMMM").format(this);
-  String get toMMMMy => DateFormat("MMMM, y").format(this);
-  String get toMMMD => DateFormat("MMM d").format(this);
-  String get toMMMDy => DateFormat("MMM d, y").format(this);
-  String get toy => DateFormat("y").format(this);
-  String get toHHmm => DateFormat("HH:mm").format(this);
-  String get toHmma => DateFormat("h:mm a").format(this);
-  String get toHmm => DateFormat("h:mm").format(this);
-  String get toyyyyMMddHHmmssZ =>
-      DateFormat("yyyy-MM-dd HH:mm:ss'Z'").format(this);
-  String get toyyyyMMddHHmmss => DateFormat("yyyy-MM-dd HH:mm:ss").format(this);
+  String get toEdm => _edmFormat.format(this);
+  String get toEEE => _eeeFormat.format(this);
+  String get toEEEd => _eeedFormat.format(this);
+  String get toMMM => _mmmFormat.format(this);
+  String get toMMMM => _mmmmFormat.format(this);
+  String get toMMMMy => _mmmmyFormat.format(this);
+  String get toMMMD => _mmmdFormat.format(this);
+  String get toMMMDy => _mmmdyFormat.format(this);
+  String get toy => _yFormat.format(this);
+  String get toHHmm => _hhmmFormat.format(this);
+  String get toHmma => _hmmaFormat.format(this);
+  String get toHmm => _hmmFormat.format(this);
+  String get toyyyyMMddHHmmssZ => _yyyyMMddHHmmssZFormat.format(this);
+  String get toyyyyMMddHHmmss => _yyyyMMddHHmmssDateTimeFormat.format(this);
   DateTime get beginningOfHour => DateTime(year, month, day, hour);
   DateTime get sundayOfWeek => DateTime(year, month, (7 - weekday) + day);
   DateTime get mondayOfWeek => DateTime(year, month, day - (weekday - 1));
-  String get toMMMdhmma => DateFormat("MMM d @ h:mm a").format(this);
+  String get toMMMdhmma => _mmmdhmmaFormat.format(this);
 
   String get timeAgoDays {
     final DateTime now = clock.now();

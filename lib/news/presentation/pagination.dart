@@ -43,139 +43,125 @@ class ResponsivePagination extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        // if infinite width (rare in row inside scrollable), fall back to cap
-        final double maxWidth = (constraints.maxWidth.isFinite)
-            ? constraints.maxWidth
-            : (buttonWidth + spacing) * maxVisiblePagesCap + 80;
-
-        // reserve space for left & right arrow buttons
-        final double arrowsReserve = (buttonWidth + spacing) * 2;
-
-        // compute how many page buttons can fit
-        int fit = ((maxWidth - arrowsReserve) / (buttonWidth + spacing))
-            .floor();
-        fit = fit.clamp(minVisiblePages, maxVisiblePagesCap);
-        fit = fit.clamp(1, totalPages);
-
-        // pick visible window of pages centered on currentPage
-        final int half = fit ~/ 2;
-        int start = currentPage - half;
-        int end = start + fit - 1;
-
-        if (start < 1) {
-          start = 1;
-          end = start + fit - 1;
-        }
-        if (end > totalPages) {
-          end = totalPages;
-          start = end - fit + 1;
-          if (start < 1) {
-            start = 1;
-          }
-        }
+        final _PaginationRange range = _calculateRange(constraints.maxWidth);
 
         final List<Widget> children = <Widget>[
-          // left arrow
           _PaginationArrow(
             icon: Icons.chevron_left,
             enabled: currentPage > 1,
             onTap: () => onPageChanged((currentPage - 1).clamp(1, totalPages)),
             buttonWidth: buttonWidth,
           ),
-        ];
-
-        // optional "1" and ellipsis when start > 1
-        if (start > 1) {
-          children.add(
-            _PageButton(
-              page: 1,
-              isActive: currentPage == 1,
-              onTap: () => onPageChanged(1),
-              buttonWidth: buttonWidth,
-              textStyle: currentPage == 1 ? activeTextStyle : pageTextStyle,
-              decoration: currentPage == 1
-                  ? activeDecoration
-                  : buttonDecoration,
-            ),
-          );
-          if (start > 2) {
-            children.add(_Ellipsis(buttonWidth: buttonWidth));
-          }
-        }
-
-        // page range
-        for (int i = start; i <= end; i++) {
-          if (i == 1 && start > 1) {
-            continue;
-          }
-          if (i == totalPages && end < totalPages) {
-            continue;
-          }
-
-          children.add(
-            _PageButton(
-              page: i,
-              isActive: i == currentPage,
-              onTap: () => onPageChanged(i),
-              buttonWidth: buttonWidth,
-              textStyle: i == currentPage ? activeTextStyle : pageTextStyle,
-              decoration: i == currentPage
-                  ? activeDecoration
-                  : buttonDecoration,
-            ),
-          );
-        }
-
-        // optional ellipsis and last page when end < totalPages
-        if (end < totalPages) {
-          if (end < totalPages - 1) {
-            children.add(_Ellipsis(buttonWidth: buttonWidth));
-          }
-          children.add(
-            _PageButton(
-              page: totalPages,
-              isActive: currentPage == totalPages,
-              onTap: () => onPageChanged(totalPages),
-              buttonWidth: buttonWidth,
-              textStyle: currentPage == totalPages
-                  ? activeTextStyle
-                  : pageTextStyle,
-              decoration: currentPage == totalPages
-                  ? activeDecoration
-                  : buttonDecoration,
-            ),
-          );
-        }
-
-        // right arrow
-        children.add(
+          ..._buildPageButtons(range),
           _PaginationArrow(
             icon: Icons.chevron_right,
             enabled: currentPage < totalPages,
             onTap: () => onPageChanged((currentPage + 1).clamp(1, totalPages)),
             buttonWidth: buttonWidth,
           ),
-        );
+        ];
 
-        // insert spacing between children
-        final List<Widget> spaced = <Widget>[];
-        for (int i = 0; i < children.length; i++) {
-          spaced.add(children[i]);
-          if (i != children.length - 1) {
-            spaced.add(SizedBox(width: spacing));
-          }
-        }
-
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(),
-            child: Row(mainAxisSize: MainAxisSize.min, children: spaced),
-          ),
-        );
+        return _buildScrollableRow(children);
       },
     );
   }
+
+  _PaginationRange _calculateRange(double maxWidth) {
+    final double effectiveMaxWidth = (maxWidth.isFinite)
+        ? maxWidth
+        : (buttonWidth + spacing) * maxVisiblePagesCap + 80;
+
+    final double arrowsReserve = (buttonWidth + spacing) * 2;
+
+    int fit = ((effectiveMaxWidth - arrowsReserve) / (buttonWidth + spacing))
+        .floor();
+    fit = fit.clamp(minVisiblePages, maxVisiblePagesCap);
+    fit = fit.clamp(1, totalPages);
+
+    final int half = fit ~/ 2;
+    int start = currentPage - half;
+    int end = start + fit - 1;
+
+    if (start < 1) {
+      start = 1;
+      end = start + fit - 1;
+    }
+    if (end > totalPages) {
+      end = totalPages;
+      start = end - fit + 1;
+      if (start < 1) {
+        start = 1;
+      }
+    }
+
+    return _PaginationRange(start: start, end: end);
+  }
+
+  List<Widget> _buildPageButtons(_PaginationRange range) {
+    final List<Widget> children = <Widget>[];
+
+    if (range.start > 1) {
+      children.add(_buildPageButton(1));
+      if (range.start > 2) {
+        children.add(_Ellipsis(buttonWidth: buttonWidth));
+      }
+    }
+
+    for (int i = range.start; i <= range.end; i++) {
+      if (i == 1 && range.start > 1) {
+        continue;
+      }
+      if (i == totalPages && range.end < totalPages) {
+        continue;
+      }
+
+      children.add(_buildPageButton(i));
+    }
+
+    if (range.end < totalPages) {
+      if (range.end < totalPages - 1) {
+        children.add(_Ellipsis(buttonWidth: buttonWidth));
+      }
+      children.add(_buildPageButton(totalPages));
+    }
+
+    return children;
+  }
+
+  Widget _buildPageButton(int page) {
+    return _PageButton(
+      page: page,
+      isActive: page == currentPage,
+      onTap: () => onPageChanged(page),
+      buttonWidth: buttonWidth,
+      textStyle: page == currentPage ? activeTextStyle : pageTextStyle,
+      decoration: page == currentPage ? activeDecoration : buttonDecoration,
+    );
+  }
+
+  Widget _buildScrollableRow(List<Widget> children) {
+    final List<Widget> spaced = <Widget>[];
+    for (int i = 0; i < children.length; i++) {
+      spaced.add(children[i]);
+      if (i != children.length - 1) {
+        spaced.add(SizedBox(width: spacing));
+      }
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(),
+        child: Row(mainAxisSize: MainAxisSize.min, children: spaced),
+      ),
+    );
+  }
+}
+
+class _PaginationRange {
+  const _PaginationRange({required this.start, required this.end});
+  final int start;
+  final int end;
 }
 
 class _PaginationArrow extends StatelessWidget {
