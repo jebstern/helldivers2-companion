@@ -7,10 +7,9 @@ import "package:fpdart/fpdart.dart";
 import "package:signals_flutter/signals_flutter.dart";
 
 import "../../core/constants/constants.dart";
-import "package:helldivers2_companion/core/domain/i_shared_preferences_repository.dart";
-import "package:helldivers2_companion/core/infrastructure/shared_preferences_repository.dart";
+import "../../core/domain/i_shared_preferences_repository.dart";
 import "../../core/utils/hd_logger.dart";
-import "package:helldivers2_companion/main.dart";
+import "../../main.dart";
 import "../domain/news_article.dart";
 import "news_state.dart";
 
