@@ -9,7 +9,12 @@ import "../../main.dart";
 import "settings_state.dart";
 
 
+/// A controller that manages application-wide settings and their persistence.
+///
+/// It uses [ISharedPreferencesRepository] for data storage and [FlutterSignal]
+/// to notify listeners of state changes.
 class SettingsController {
+  /// Creates a [SettingsController] and initializes its state from storage.
   SettingsController() {
     _sharedPreferencesRepository = di<ISharedPreferencesRepository>();
 
@@ -18,10 +23,13 @@ class SettingsController {
 
   late final ISharedPreferencesRepository _sharedPreferencesRepository;
   final Debounce _debounce = Debounce(const Duration(milliseconds: 500));
+
+  /// The current state of settings, exposed as a signal.
   final FlutterSignal<SettingsState> state = signal<SettingsState>(
     const SettingsState(),
   );
 
+  /// Initializes or re-synchronizes the controller's state with stored data.
   void build() {
     final int level =
         _sharedPreferencesRepository.readInt(SharedPreferencesKey.level) ?? 1;
@@ -29,6 +37,9 @@ class SettingsController {
     state.value = SettingsState(level: level);
   }
 
+  /// Updates the player level and persists the change with a debounce.
+  ///
+  /// The [level] is clamped between 1 and 150.
   void setLevel(int level) {
     final int clampedLevel = level.clamp(1, 150);
     state.value = state.value.copyWith(level: clampedLevel);
