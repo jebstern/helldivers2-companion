@@ -21,15 +21,25 @@ class NewsService {
 
       for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
           in snapshot.docs) {
-        final Timestamp timestamp = doc.data()["date"] as Timestamp;
+        final Map<String, dynamic> data = doc.data();
+
+        // validate required fields and types
+        if (data["date"] is! Timestamp ||
+            data["title"] is! String ||
+            data["text"] is! String ||
+            data["imagePath"] is! String) {
+          continue; // skip malformed documents
+        }
+
+        final Timestamp timestamp = data["date"] as Timestamp;
         final DateTime date = timestamp.toDate();
 
         news.add(
           NewsArticle(
             date: date,
-            title: doc.data()["title"] as String,
-            text: doc.data()["text"] as String,
-            imagePath: doc.data()["imagePath"] as String,
+            title: data["title"] as String,
+            text: data["text"] as String,
+            imagePath: data["imagePath"] as String,
           ),
         );
       }

@@ -41,7 +41,6 @@ class ResponsivePagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         // if infinite width (rare in row inside scrollable), fall back to cap
@@ -77,76 +76,83 @@ class ResponsivePagination extends StatelessWidget {
 
         final List<Widget> children = <Widget>[];
 
-        Widget arrow({
-          required IconData icon,
-          required VoidCallback onTap,
-          required bool enabled,
-        }) {
-          return SizedBox(
-            width: buttonWidth,
-            height: 36,
-            child: TextButton(
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              onPressed: enabled ? onTap : null,
-              child: Icon(icon),
-            ),
-          );
-        }
-
         // left arrow
         children.add(
-          arrow(
+          _PaginationArrow(
             icon: Icons.chevron_left,
             enabled: currentPage > 1,
             onTap: () => onPageChanged((currentPage - 1).clamp(1, totalPages)),
+            buttonWidth: buttonWidth,
           ),
         );
 
         // optional "1" and ellipsis when start > 1
         if (start > 1) {
-          children.add(_pageButton(1, theme, isActive: currentPage == 1));
+          children.add(
+            _PageButton(
+              page: 1,
+              isActive: currentPage == 1,
+              onTap: () => onPageChanged(1),
+              buttonWidth: buttonWidth,
+              textStyle: currentPage == 1 ? activeTextStyle : pageTextStyle,
+              decoration:
+                  currentPage == 1 ? activeDecoration : buttonDecoration,
+            ),
+          );
           if (start > 2) {
-            children.add(_ellipsis());
-          } else {
-            // if start == 2 we don't need ellipsis, we'll show "2" in loop
+            children.add(_Ellipsis(buttonWidth: buttonWidth));
           }
         }
 
         // page range
         for (int i = start; i <= end; i++) {
-          // avoid duplicating "1" if already rendered
           if (i == 1 && start > 1) {
             continue;
           }
-          // avoid duplicating last page if we will add later
           if (i == totalPages && end < totalPages) {
             continue;
           }
 
-          children.add(_pageButton(i, theme, isActive: i == currentPage));
+          children.add(
+            _PageButton(
+              page: i,
+              isActive: i == currentPage,
+              onTap: () => onPageChanged(i),
+              buttonWidth: buttonWidth,
+              textStyle: i == currentPage ? activeTextStyle : pageTextStyle,
+              decoration:
+                  i == currentPage ? activeDecoration : buttonDecoration,
+            ),
+          );
         }
 
         // optional ellipsis and last page when end < totalPages
         if (end < totalPages) {
           if (end < totalPages - 1) {
-            children.add(_ellipsis());
+            children.add(_Ellipsis(buttonWidth: buttonWidth));
           }
           children.add(
-            _pageButton(totalPages, theme, isActive: currentPage == totalPages),
+            _PageButton(
+              page: totalPages,
+              isActive: currentPage == totalPages,
+              onTap: () => onPageChanged(totalPages),
+              buttonWidth: buttonWidth,
+              textStyle:
+                  currentPage == totalPages ? activeTextStyle : pageTextStyle,
+              decoration: currentPage == totalPages
+                  ? activeDecoration
+                  : buttonDecoration,
+            ),
           );
         }
 
         // right arrow
         children.add(
-          arrow(
+          _PaginationArrow(
             icon: Icons.chevron_right,
             enabled: currentPage < totalPages,
             onTap: () => onPageChanged((currentPage + 1).clamp(1, totalPages)),
+            buttonWidth: buttonWidth,
           ),
         );
 
@@ -170,33 +176,95 @@ class ResponsivePagination extends StatelessWidget {
     );
   }
 
-  Widget _pageButton(int page, ThemeData theme, {required bool isActive}) {
-    final TextStyle? textStyle = isActive
-        ? (activeTextStyle ??
-              theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold))
-        : (pageTextStyle ?? theme.textTheme.bodyMedium);
+}
 
-    final Decoration decoration = isActive
-        ? (activeDecoration ??
+class _PaginationArrow extends StatelessWidget {
+  const _PaginationArrow({
+    required this.icon,
+    required this.onTap,
+    required this.enabled,
+    required this.buttonWidth,
+  });
+
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool enabled;
+  final double buttonWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: buttonWidth,
+      height: 36,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+        onPressed: enabled ? onTap : null,
+        child: Icon(icon),
+      ),
+    );
+  }
+}
+
+class _PageButton extends StatelessWidget {
+  const _PageButton({
+    required this.page,
+    required this.isActive,
+    required this.onTap,
+    required this.buttonWidth,
+    this.textStyle,
+    this.decoration,
+  });
+
+  final int page;
+  final bool isActive;
+  final VoidCallback onTap;
+  final double buttonWidth;
+  final TextStyle? textStyle;
+  final Decoration? decoration;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextStyle effectiveTextStyle = (isActive
+            ? (textStyle ??
+                theme.textTheme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold))
+            : (textStyle ?? theme.textTheme.bodyMedium)) ??
+        const TextStyle();
+
+    final Decoration effectiveDecoration = isActive
+        ? (decoration ??
               BoxDecoration(
                 color: theme.colorScheme.primary,
                 borderRadius: BorderRadius.circular(6),
               ))
-        : (buttonDecoration ?? const BoxDecoration());
+        : (decoration ?? const BoxDecoration());
 
     return GestureDetector(
-      onTap: () => onPageChanged(page),
+      onTap: onTap,
       child: Container(
         width: buttonWidth,
         height: 36,
         alignment: Alignment.center,
-        decoration: decoration,
-        child: Text(page.toString(), style: textStyle),
+        decoration: effectiveDecoration,
+        child: Text(page.toString(), style: effectiveTextStyle),
       ),
     );
   }
+}
 
-  Widget _ellipsis() {
+class _Ellipsis extends StatelessWidget {
+  const _Ellipsis({required this.buttonWidth});
+
+  final double buttonWidth;
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       width: buttonWidth / 1.6,
       height: 36,
