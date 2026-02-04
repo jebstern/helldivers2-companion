@@ -10,13 +10,20 @@ import "../../main.dart" show di;
 import "../../settings/application/settings_controller.dart";
 import "../../titles/domain/player_title.dart";
 
+/// A widget that displays a random greeting combined with the player's current title.
+///
+/// The greeting is randomly selected from a list of predefined strings upon
+/// initialization, while the title is determined by the player's level
+/// retrieved from [SettingsController].
 class NewsGreeting extends StatefulWidget {
+  /// Creates a [NewsGreeting].
   const NewsGreeting({super.key});
 
   @override
   State<NewsGreeting> createState() => _NewsGreetingState();
 }
 
+/// The state for [NewsGreeting] that handles random greeting selection and title logic.
 class _NewsGreetingState extends State<NewsGreeting> {
   static const List<String> _greetings = <String>[
     "Welcome",

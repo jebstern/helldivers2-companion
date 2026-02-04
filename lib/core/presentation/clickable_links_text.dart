@@ -6,6 +6,11 @@ import "package:url_launcher/url_launcher.dart";
 class ClickableLinksText extends StatelessWidget {
   const ClickableLinksText({required this.text, super.key});
 
+  static final RegExp _urlRegExp = RegExp(
+    r"(https?:\/\/[^\s]+)",
+    caseSensitive: false,
+  );
+
   final String text;
 
   @override
@@ -16,15 +21,10 @@ class ClickableLinksText extends StatelessWidget {
   }
 
   Widget buildTextWithLinks({TextStyle? style, TextStyle? linkStyle}) {
-    final RegExp urlRegExp = RegExp(
-      r"(https?:\/\/[^\s]+)",
-      caseSensitive: false,
-    );
-
     final List<InlineSpan> spans = <InlineSpan>[];
     int start = 0;
 
-    for (final RegExpMatch match in urlRegExp.allMatches(text)) {
+    for (final RegExpMatch match in _urlRegExp.allMatches(text)) {
       // normal text before the link
       if (match.start > start) {
         spans.add(
