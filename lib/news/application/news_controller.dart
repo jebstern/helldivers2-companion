@@ -7,15 +7,18 @@ import "package:fpdart/fpdart.dart";
 import "package:signals_flutter/signals_flutter.dart";
 
 import "../../core/constants/constants.dart";
-import "package:helldivers2_companion/core/domain/i_shared_preferences_repository.dart";
-import "package:helldivers2_companion/core/infrastructure/shared_preferences_repository.dart";
+import "../../core/domain/i_shared_preferences_repository.dart";
 import "../../core/utils/hd_logger.dart";
-import "package:helldivers2_companion/main.dart";
+import "../../main.dart";
 import "../domain/news_article.dart";
 import "news_state.dart";
 
 
+/// A controller that manages the news state of the application.
+///
+/// It listens to news updates from Firebase Firestore and handles pagination.
 class NewsController {
+  /// Creates a [NewsController] and starts listening to news updates.
   NewsController() {
     _sharedPreferencesRepository = di<ISharedPreferencesRepository>();
 
@@ -60,12 +63,12 @@ class NewsController {
           } catch (error) {
             hdLogger.warning(
               "Error parsing data:"
-                  ' (element["date"]: ${element["date"]}),',
-              ' (element["title"]: ${element["title"]}),'
-                  ' (element["text"]: ${element["text"]}),'
-                  ' (element["imagePath"]: ${element["imagePath"]})'
-                  ' (element["id"]: ${element["id"]}).'
-                  " Error: $error",
+                  ' (element["date"]: \${element["date"]}),',
+              ' (element["title"]: \${element["title"]}),'
+                  ' (element["text"]: \${element["text"]}),'
+                  ' (element["imagePath"]: \${element["imagePath"]})'
+                  ' (element["id"]: \${element["id"]}).'
+                  " Error: \$error",
             );
           }
 
@@ -92,7 +95,7 @@ class NewsController {
         _updateState(newsArticles);
       },
       onError: (Object? error) {
-        hdLogger.severe("Error fetching news: $error");
+        hdLogger.severe("Error fetching news: \$error");
       },
     );
   }
@@ -112,7 +115,7 @@ class NewsController {
       newArticles = newsArticles.length != state.value.news.length;
     }
 
-    hdLogger.shout("newArticles: $newArticles");
+    hdLogger.shout("newArticles: \$newArticles");
 
     state.value = state.value.copyWith(
       news: newsArticles,
@@ -120,6 +123,7 @@ class NewsController {
     );
   }
 
+  /// Updates the current page index.
   void onPageChanged(int page) {
     if (page == state.value.currentPage) {
       return;
@@ -132,6 +136,7 @@ class NewsController {
     state.value = state.value.copyWith(currentPage: page);
   }
 
+  /// Returns the list of [NewsArticle] for the current page based on pagination.
   List<NewsArticle> getCurrentPageItems() {
     final int startIndex = (state.value.currentPage - 1) * maxItemsPerPage;
     final int endIndex = (startIndex + maxItemsPerPage).clamp(
@@ -142,6 +147,7 @@ class NewsController {
     return state.value.news.sublist(startIndex, endIndex);
   }
 
+  /// Marks a [NewsArticle] as read and persists this status.
   void markAsRead(NewsArticle article) {
     if (article.read) {
       return;

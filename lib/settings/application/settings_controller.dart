@@ -2,11 +2,10 @@ import "dart:async";
 
 import "package:signals_flutter/signals_flutter.dart";
 
-import "package:helldivers2_companion/core/domain/i_shared_preferences_repository.dart";
-import "package:helldivers2_companion/core/infrastructure/shared_preferences_repository.dart";
-
+import "../../core/domain/i_shared_preferences_repository.dart";
+import "../../core/infrastructure/shared_preferences_repository.dart";
 import "../../core/utils/debounce.dart";
-import "package:helldivers2_companion/main.dart";
+import "../../main.dart";
 import "settings_state.dart";
 
 
@@ -31,12 +30,13 @@ class SettingsController {
   }
 
   void setLevel(int level) {
-    state.value = state.value.copyWith(level: level);
+    final int clampedLevel = level.clamp(1, 150);
+    state.value = state.value.copyWith(level: clampedLevel);
     _debounce(() {
       unawaited(
         _sharedPreferencesRepository.writeInt(
           SharedPreferencesKey.level,
-          level,
+          clampedLevel,
         ),
       );
     });
