@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:signals_flutter/signals_flutter.dart";
 
 import "../../core/presentation/base_view.dart";
 import "../../main.dart" show di;
@@ -17,22 +18,25 @@ class WarbondsView extends StatefulWidget {
 class _WarbondsViewState extends State<WarbondsView> {
   @override
   Widget build(BuildContext context) {
+    final WarbondsController controller = di<WarbondsController>();
+
     return BaseView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const SizedBox(height: 32),
-          _buildBody(),
-          const SizedBox(height: 16),
-        ],
-      ),
+      child: Watch<Column>((BuildContext context) {
+        final WarbondsState warbondsState = controller.state.watch(context);
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const SizedBox(height: 32),
+            _buildBody(warbondsState),
+            const SizedBox(height: 16),
+          ],
+        );
+      }),
     );
   }
 
-  Widget _buildBody() {
-    final WarbondsController controller = di<WarbondsController>();
-    final WarbondsState warbondsState = controller.state.value;
-
+  Widget _buildBody(WarbondsState warbondsState) {
     return Column(
       spacing: 32,
       children: warbondsState.warbonds.map((WarbondItem e) {

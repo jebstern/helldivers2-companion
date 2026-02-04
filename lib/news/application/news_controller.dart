@@ -115,7 +115,9 @@ class NewsController {
       newArticles = newsArticles.length != state.value.news.length;
     }
 
-    hdLogger.shout("newArticles: \$newArticles");
+    if (newArticles) {
+      hdLogger.shout("New articles detected!");
+    }
 
     state.value = state.value.copyWith(
       news: newsArticles,

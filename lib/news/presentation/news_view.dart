@@ -63,7 +63,7 @@ class NewsView extends StatelessWidget {
         spacing: 32,
         children: currentPageItems.map((NewsArticle e) {
           return NewsCard(
-            newsArticale: e,
+            newsArticle: e,
             onTap: () {
               controller.markAsRead(e);
 

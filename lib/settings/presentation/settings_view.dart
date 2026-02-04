@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:forui/forui.dart";
 import "package:signals_flutter/signals_flutter.dart";
 
+import "../../core/constants/player_constants.dart";
 import "../../main.dart" show di;
 import "../application/settings_controller.dart";
 import "../application/settings_state.dart";
@@ -14,9 +15,6 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  static const int _maxValue = 150;
-  static const int _minValue = 1;
-
   @override
   Widget build(BuildContext context) {
     final FTypography typography = context.theme.typography;
@@ -70,8 +68,8 @@ class _SettingsViewState extends State<SettingsView> {
 
                   controller.setLevel(newLevel);
                 },
-                min: _minValue.toDouble(),
-                max: _maxValue.toDouble(),
+                min: PlayerConstants.minLevel.toDouble(),
+                max: PlayerConstants.maxLevel.toDouble(),
                 label: "${settingsState.level}",
               ),
             ),
