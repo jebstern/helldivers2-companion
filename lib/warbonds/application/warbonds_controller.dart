@@ -6,11 +6,16 @@ import "../domain/warbond_item.dart";
 import "warbonds_state.dart";
 
 
+/// A controller that manages the warbonds state of the application.
+///
+/// It listens to warbond updates from Firebase Firestore and handles sorting.
 class WarbondsController {
+  /// Creates a [WarbondsController] and starts listening to warbond updates.
   WarbondsController() {
     _listenToWarbondUpdates();
   }
 
+  /// The current state of warbonds, exposed as a signal.
   final FlutterSignal<WarbondsState> state = signal<WarbondsState>(
     const WarbondsState(),
   );
